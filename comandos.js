@@ -44,7 +44,7 @@ module.exports = {
     },
 
     "populacao" : async (msg, bot, whatsapp)=>{
-        var texto = msg.body.split(' ')[1]
+        var texto = msg.body.toLowerCase().split(' ')[1]
         if(texto == "povoado"){
             var Pessoas= "População do povoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ");
             msg.reply(Pessoas);
