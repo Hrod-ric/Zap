@@ -12,8 +12,13 @@ const contato = async (msg)=>{
 }
 module.exports = {
     "lista" : async (msg, bot, whatsapp)=>{
-        var texto = msg.body.split(' ')[1]
+        var texto = msg.body.toLowerCase().split(' ')[1]
         var numero = (await contato(msg)).numero
+        if(texto == "pessoas"){
+            var String = "Lista de Pessoas\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ")
+            msg.reply("Enviado!")
+            await bot.sendMessage(numero, String)
+        }
         if(texto == "feiticos"){
             var String = "Lista de Feiticos\n- " + listar("Feiticos").map(p=>p.nome).join("\n- ")
             msg.reply("Enviado!")
@@ -29,10 +34,54 @@ module.exports = {
         //console.log(chat);
         if(encontrou){
             msg.reply("Enviado!")
+<<<<<<< Updated upstream
             await bot.sendMessage(numero, `Nome: ${encontrou.nome} \nIdade: ${encontrou.idade} ${encontrou.descricao?"\nDescrição: "+encontrou.descricao:""}${encontrou.habPassivas?"\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`)
         }
         else{
             msg.reply("Não encontrei!")
+=======
+            await bot.sendMessage(numero, 
+                `Nome: ${encontrou.nome} \n`+
+                `Idade: ${encontrou.idade}`+
+                `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:""}`+
+                `${encontrou.habPassivas?"\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`+
+                `${encontrou.feiticosAprendidos?"\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`)
+        }
+    },
+
+    "populacao" : async (msg, bot, whatsapp)=>{
+        var texto = msg.body.split(' ')[1]
+        if(texto == "povoado"){
+            var Pessoas= "População do povoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ");
+            msg.reply(Pessoas);
+        }
+    },
+
+    "consulta" : async (msg, bot, whatsapp)=>{
+        var Lista=listar("Players").concat(listar("Povoado"),listar("Feiticos"));
+        var texto = msg.body.toLowerCase().slice(10);
+        //console.log(texto);
+        var encontrou = Lista.find(p=>p.nome == texto);
+
+        try{
+            msg.reply(
+                `Nome: ${encontrou.nome}`+
+                `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:"Sem descrição"}`
+            )
+        }catch{
+            msg.reply("Não foi encontrado!")
+        }
+    },
+
+    "erro" : ()=>{
+        throw "Teste de erro"
+    },
+
+    "adicionar" :   (msg)=>{
+        var input = msg.body.toLowerCase().split(' ')[1]
+        if(input == "pessoas"){
+            var Lista = listar("Extra")
+>>>>>>> Stashed changes
         }
         
     }
