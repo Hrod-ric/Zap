@@ -11,11 +11,25 @@ const contato = async (msg)=>{
     return {chat,numero,contato};
 }
 module.exports = {
+    "comandos" : async (msg, bot, whatsapp)=>{
+        bot.sendMessage(msg.from,
+            `".ficha"\n`+
+            `"Informações sobre o seu personagem"\n\n`+
+            `".lista (pessoas, feiticos)"\n`+
+            `"Mostra os nomes de um dos grupos"\n\n`+
+            `".populacao (povoado)"\n`+
+            `"Mostra os habitantes de um lugar"\n\n`+
+            `".consulta (isqueiro/Betsabé)"\n`+
+            `"para pesquisar um elemento e receber a descricao"`)
+    },
     "lista" : async (msg, bot, whatsapp)=>{
         var texto = msg.body.toLowerCase().split(' ')[1]
         var numero = (await contato(msg)).numero
         if(texto == "pessoas"){
-            var String = "Lista de Pessoas\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ")
+            var String = "Lista de Pessoas"+
+            "\n\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + 
+            "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ") +
+            "\n\nRollenspiel\n- " + listar("Rollenspiel").map(p=>p.nome).join("\n- ")
             msg.reply("Enviado!")
             await bot.sendMessage(numero, String)
         }
@@ -52,7 +66,7 @@ module.exports = {
     },
 
     "consulta" : async (msg, bot, whatsapp)=>{
-        var Lista=listar("Players").concat(listar("Povoado"),listar("Feiticos"));
+        var Lista=listar("Players").concat(listar("Povoado"),listar("Rollenspiel"),listar("Feiticos"));
         var texto = msg.body.toLowerCase().slice(10);
         //console.log(texto);
         var encontrou = Lista.find(p=>p.nome == texto);
@@ -60,6 +74,7 @@ module.exports = {
         try{
             msg.reply(
                 `Nome: ${encontrou.nome}`+
+                `${encontrou.titulo?"\nDescrição: "+encontrou.titulo:"Sem titulo"}`+
                 `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:"Sem descrição"}`
             )
         }catch{

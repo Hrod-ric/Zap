@@ -27,9 +27,9 @@ bot.on("message", async msg=>{
     var comandoSelecionado = comandos[separarPrimeiraPalavra]
     console.log(menssagem, separarPrimeiraPalavra, comandoSelecionado, comandos);
     if(comandoSelecionado){
-        try{
+        try {
             comandoSelecionado(msg,bot,whatsapp)
-        }catch{
+        } catch (e) {
             msg.reply("Erro!");
         }
     }
