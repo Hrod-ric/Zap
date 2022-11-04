@@ -34,12 +34,6 @@ module.exports = {
         //console.log(chat);
         if(encontrou){
             msg.reply("Enviado!")
-<<<<<<< Updated upstream
-            await bot.sendMessage(numero, `Nome: ${encontrou.nome} \nIdade: ${encontrou.idade} ${encontrou.descricao?"\nDescrição: "+encontrou.descricao:""}${encontrou.habPassivas?"\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`)
-        }
-        else{
-            msg.reply("Não encontrei!")
-=======
             await bot.sendMessage(numero, 
                 `Nome: ${encontrou.nome} \n`+
                 `Idade: ${encontrou.idade}`+
@@ -81,7 +75,6 @@ module.exports = {
         var input = msg.body.toLowerCase().split(' ')[1]
         if(input == "pessoas"){
             var Lista = listar("Extra")
->>>>>>> Stashed changes
         }
         
     }
