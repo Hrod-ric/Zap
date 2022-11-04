@@ -1,5 +1,6 @@
 {
-    "nome"  :   "jean",
+    "id"  :   "jean",
+    "nome"  :   "Jean",
     "idade" :   "indefinido",
     "imagem":   "",
     "descricao" : "Caçador de recompensas, ajudante da Scarlet"

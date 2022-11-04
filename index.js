@@ -1,6 +1,16 @@
 const whatsapp = require("whatsapp-web.js")
-const bot = new whatsapp.Client()
+const bot = new whatsapp.Client({
+    puppeteer: {
+        executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    }
+})
 const fs = require ("fs")
+/*const client = new Client({
+    puppeteer: {
+        executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    }
+})*/
+ 
 
 var forchat = ["557183334339-1503676340","557187681493-1555160547"]
 

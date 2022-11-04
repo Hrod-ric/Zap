@@ -1,7 +1,8 @@
 {
-    "nome"  :   "alucard",
+    "id"    :   "alucard",
+    "nome"  :   "✡ _*Alucard*_ ✝",
     "titulo":   "Demonio veloz",
     "idade" :   "indefinido",
-    "imagem":   "",
+    "imagem":   "alucard.jpg",
     "descricao" : "Lorde Vampiro e Principe Demonio"
 }

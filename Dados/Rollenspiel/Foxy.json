@@ -1,5 +1,6 @@
 {
-    "nome"  :   "foxy",
+    "id"  :   "foxy",
+    "nome"  :   "Foxy",
     "idade" :   "indefinido",
     "imagem":   "",
     "descricao" : "Medico famoso capaz de manipular runas complexas"

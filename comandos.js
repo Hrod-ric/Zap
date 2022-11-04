@@ -15,14 +15,14 @@ module.exports = {
         bot.sendMessage(msg.from,
             `".ficha"\n`+
             `"Informações sobre o seu personagem"\n\n`+
-            `".lista (pessoas, feiticos)"\n`+
+            `".listar (pessoas, feiticos)"\n`+
             `"Mostra os nomes de um dos grupos"\n\n`+
             `".populacao (povoado)"\n`+
             `"Mostra os habitantes de um lugar"\n\n`+
-            `".consulta (isqueiro/Betsabé)"\n`+
+            `".consultar (isqueiro/Betsabé)"\n`+
             `"para pesquisar um elemento e receber a descricao"`)
     },
-    "lista" : async (msg, bot, whatsapp)=>{
+    "listar" : async (msg, bot, whatsapp)=>{
         var texto = msg.body.toLowerCase().split(' ')[1]
         var numero = (await contato(msg)).numero
         if(texto == "pessoas"){
@@ -64,18 +64,29 @@ module.exports = {
             msg.reply(Pessoas);
         }
     },
-
-    "consulta" : async (msg, bot, whatsapp)=>{
+    "consultar" :  async (msg, bot, whatsapp)=>{
         var Lista=listar("Players").concat(listar("Povoado"),listar("Rollenspiel"),listar("Feiticos"));
-        var texto = msg.body.toLowerCase().slice(10);
-        //console.log(texto);
-        var encontrou = Lista.find(p=>p.nome == texto);
+        //var texto = msg.body.toLowerCase().slice(11);
+        var comando = msg.body.split(' ')[0];
+        var indice = msg.body.indexOf(comando) + comando.length;
+        var texto = msg.body.slice(indice+1, msg.body.length);
+        //console.log(message);
+        var encontrou = Lista.find(p=>p.id == texto);
 
         try{
+
+            if(encontrou.imagem){
+                var imagem = await whatsapp.MessageMedia.fromFilePath("./Imagens/"+encontrou.imagem)
+                if(encontrou.imagem.includes(".mp4")){
+                    await bot.sendMessage(msg.from,imagem,{ sendVideoAsGif: true });
+                }else{
+                    await bot.sendMessage(msg.from,imagem)
+                }
+            }
             msg.reply(
                 `Nome: ${encontrou.nome}`+
-                `${encontrou.titulo?"\nDescrição: "+encontrou.titulo:"Sem titulo"}`+
-                `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:"Sem descrição"}`
+                `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
+                `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:"\nSem descrição"}`
             )
         }catch{
             msg.reply("Não foi encontrado!")

@@ -1,5 +1,6 @@
 {
-    "nome"  :   "cagliostro",
+    "id"  :   "cagliostro",
+    "nome"  :   "Cagliostro",
     "idade" :   "indefinido",
     "imagem":   "",
     "descricao" : "Contador do Aleksander"

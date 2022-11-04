@@ -1,6 +1,7 @@
 {
-    "nome"  :   "tyrion",
+    "id"    :   "tyrion",
+    "nome"  :   "Tyrion Blake Tacamassanomuro",
     "idade" :   "indefinido",
-    "imagem":   "",
+    "imagem":   "2.mp4",
     "descricao" : "Jovem desajeitado e prefeito temporario de Malis"
 }

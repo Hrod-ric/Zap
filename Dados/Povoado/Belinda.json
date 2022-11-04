@@ -1,5 +1,6 @@
 {
-    "nome"  :   "belinda",
+    "id"  :   "belinda",
+    "nome"  :   "Belinda",
     "idade" :   "indefinido",
     "imagem":   "",
     "descricao" : "Tsundere"

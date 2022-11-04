@@ -1,5 +1,6 @@
 {
-    "nome"  :   "isqueiro",
+    "id"  :   "isqueiro",
+    "nome"  :   "Ísqueiro",
     "tipo"  :   "fogo",
     "escola":   "Destruição/Elemental",
     "imagem":   "",
