@@ -20,7 +20,11 @@ module.exports = {
             `".populacao (povoado)"\n`+
             `"Mostra os habitantes de um lugar"\n\n`+
             `".consultar (isqueiro/Betsabé)"\n`+
-            `"para pesquisar um elemento e receber a descricao"`)
+            `"para pesquisar um elemento e receber a descricao"\n`+
+            `".augh"\n`+
+            `".pegar"\n`+
+            `".sexo"\n`+
+            `".violino"\n`)
     },
     "listar" : async (msg, bot, whatsapp)=>{
         var texto = msg.body.toLowerCase().split(' ')[1]
@@ -103,5 +107,37 @@ module.exports = {
             var Lista = listar("Extra")
         }
         
+    },
+    "violino"  :  async (msg, bot, whatsapp)=>{
+        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/violino.mp3")
+        try{
+            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
+        }catch{
+
+        }
+    },
+    "sexo"  :  async (msg, bot, whatsapp)=>{
+        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/sexo.mp3")
+        try{
+            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
+        }catch{
+
+        }
+    },
+    "augh"  :  async (msg, bot, whatsapp)=>{
+        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/augh.mp3")
+        try{
+            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
+        }catch{
+
+        }
+    },
+    "pegar"  :  async (msg, bot, whatsapp)=>{
+        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/pegar.mp3")
+        try{
+            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
+        }catch{
+
+        }
     }
 }

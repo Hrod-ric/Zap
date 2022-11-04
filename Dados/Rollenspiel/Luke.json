@@ -1,7 +1,8 @@
 {
     "id"  :   "luke",
-    "nome"  :   "Luke",
+    "nome"  :   "_*Luke Valentine*_",
+    "titulo":   "",
     "idade" :   "indefinido",
-    "imagem":   "",
+    "imagem":   "4.mp4",
     "descricao" : "Rapaz maduro, ferreiro e aventureiro nato"
 }
