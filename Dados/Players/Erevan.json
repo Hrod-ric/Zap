@@ -4,5 +4,7 @@
     "nome"  :   "Erevan",
     "idade" :   "não lembro",
     "imagem":   "",
-    "descricao" : "Destroçador"
+    "descricao" : "Destroçador",
+    "habPassivas" : ["não"],
+    "feiticosAprendidos" : ["não"]
 }

@@ -4,5 +4,7 @@
     "nome"  :   "Ademiro",
     "idade" :   "",
     "imagem":   "",
-    "descricao" : ""
+    "descricao" : "",
+    "habPassivas" : ["não"],
+    "feiticosAprendidos" : ["não"]
 }
