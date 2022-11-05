@@ -4,5 +4,8 @@
     "nome"  :   "Baltimore",
     "idade" :   "nao lembro",
     "imagem":   "",
-    "descricao" : "hetero top"
+    "descricao" : "hetero top",
+    "habPassivas" : ["Memoria Fotografica"],
+    "feiticosAprendidos" : ["não"]
+
 }

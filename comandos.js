@@ -15,7 +15,7 @@ module.exports = {
         bot.sendMessage(msg.from,
             `".ficha"\n`+
             `"Informações sobre o seu personagem"\n\n`+
-            `".listar (pessoas, feiticos)"\n`+
+            `".listar (pessoas, feiticos, arquivos)"\n`+
             `"Mostra os nomes de um dos grupos"\n\n`+
             `".populacao (povoado)"\n`+
             `"Mostra os habitantes de um lugar"\n\n`+
@@ -24,24 +24,57 @@ module.exports = {
             `".augh"\n`+
             `".pegar"\n`+
             `".sexo"\n`+
-            `".violino"\n`)
+            `".violino"\n`+
+            `".enviar (numero) (arquivo)"`)
     },
+
     "listar" : async (msg, bot, whatsapp)=>{
         var texto = msg.body.toLowerCase().split(' ')[1]
         var numero = (await contato(msg)).numero
-        if(texto == "pessoas"){
-            var String = "Lista de Pessoas"+
-            "\n\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + 
-            "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ") +
-            "\n\nRollenspiel\n- " + listar("Rollenspiel").map(p=>p.nome).join("\n- ")
-            msg.reply("Enviado!")
-            await bot.sendMessage(numero, String)
+        try{
+            if(texto == "pessoas"){
+                texto = msg.body.toLowerCase().split(' ')[2]
+                if(texto){
+                    var String= "População do "+texto+"\n- " + listar(texto).map(p=>p.nome).join("\n- ");
+                    msg.reply("Enviado!")
+                    await bot.sendMessage(numero, String)
+                    return
+                }
+                var String = "Lista de Pessoas"+
+                "\n\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + 
+                "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ") +
+                "\n\nRollenspiel\n- " + listar("Rollenspiel").map(p=>p.nome).join("\n- ")
+                msg.reply("Enviado!")
+                await bot.sendMessage(numero, String)
+            }
+            
+            else if(texto == "feiticos"){
+                texto = msg.body.toLowerCase().split(' ')[2]
+                if(texto){
+                    var String= "Feiticos de "+texto+"\n- " + listar(texto).map(p=>p.nome).join("\n- ");
+                    msg.reply("Enviado!")
+                    await bot.sendMessage(numero, String)
+                    return
+                }
+                var String = "Lista de Feiticos\n- " + listar("Feiticos").map(p=>p.nome).join("\n- ")
+                msg.reply("Enviado!")
+                await bot.sendMessage(numero, String)
+            }
+            
+            else if(texto == "arquivos"){
+                //var String = "Lista de Arquivos\n- " + listar("Imagens").map(p=>p.nome).join("\n- ")
+                var String = "Lista de Arquivos\nAudios:\n- augh.mp3\n- pegar.mp3\n- sexo.mp3\n- violino.mp3\n\nVideos:\n- 1.mp4\n- 2.mp4\n- 3.mp4\n- 4.mp4\n- a.mp4"
+                msg.reply("Enviado!")
+                await bot.sendMessage(numero, String)
+            }
+            
+            else{
+                await bot.sendMessage(msg.from, "a opção escolhida nao existe, escolha entre: pessoas, feiticos, arquivos ou o nome de um lugar")
+            }
+        }catch{
+            await bot.sendMessage(msg.from,"erro!")
         }
-        if(texto == "feiticos"){
-            var String = "Lista de Feiticos\n- " + listar("Feiticos").map(p=>p.nome).join("\n- ")
-            msg.reply("Enviado!")
-            await bot.sendMessage(numero, String)
-        }   
+
     },
 
     "ficha" : async (msg, bot, whatsapp)=>{ 
@@ -49,7 +82,7 @@ module.exports = {
         var numero = (await contato(msg)).numero
         var chat = (await contato(msg)).chat
         var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
-        //console.log(chat);
+        console.log(chat.id.user);
         if(encontrou){
             msg.reply("Enviado!")
             await bot.sendMessage(numero, 
@@ -61,13 +94,6 @@ module.exports = {
         }
     },
 
-    "populacao" : async (msg, bot, whatsapp)=>{
-        var texto = msg.body.toLowerCase().split(' ')[1]
-        if(texto == "povoado"){
-            var Pessoas= "População do povoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ");
-            msg.reply(Pessoas);
-        }
-    },
     "consultar" :  async (msg, bot, whatsapp)=>{
         var Lista=listar("Players").concat(listar("Povoado"),listar("Rollenspiel"),listar("Feiticos"));
         //var texto = msg.body.toLowerCase().slice(11);
@@ -80,7 +106,7 @@ module.exports = {
         try{
 
             if(encontrou.imagem){
-                var imagem = await whatsapp.MessageMedia.fromFilePath("./Imagens/"+encontrou.imagem)
+                var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+encontrou.imagem)
                 if(encontrou.imagem.includes(".mp4")){
                     await bot.sendMessage(msg.from,imagem,{ sendVideoAsGif: true });
                 }else{
@@ -108,36 +134,32 @@ module.exports = {
         }
         
     },
-    "violino"  :  async (msg, bot, whatsapp)=>{
-        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/violino.mp3")
+
+    "audio" : async (msg, bot, whatsapp)=>{
+        var texto = msg.body.split(' ')[1];
         try{
+            var audio = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+texto+".mp3")
             await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
         }catch{
-
+            await bot.sendMessage(msg.from,"Não encontrado")
         }
     },
-    "sexo"  :  async (msg, bot, whatsapp)=>{
-        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/sexo.mp3")
-        try{
-            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
-        }catch{
 
-        }
-    },
-    "augh"  :  async (msg, bot, whatsapp)=>{
-        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/augh.mp3")
+    "enviar" : async (msg, bot, whatsapp)=>{
+        var numero = msg.body.split(' ')[1];
+            numero = numero.includes('@g.us') ? numero :
+            numero = numero.includes('@c.us') ? numero : `${numero}@c.us`;
+        var texto = msg.body.split(' ')[2];
         try{
-            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+texto)
+            if(texto.includes(".mp4")){
+                await bot.sendMessage(numero, video, { sendVideoAsGif: true })    
+            }else if(texto.includes(".mp3")){
+                await bot.sendMessage(numero, video, { sendAudioAsVoice: true })
+            }
         }catch{
-
-        }
-    },
-    "pegar"  :  async (msg, bot, whatsapp)=>{
-        var audio = await whatsapp.MessageMedia.fromFilePath("./Imagens/pegar.mp3")
-        try{
-            await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
-        }catch{
-
-        }
+            await bot.sendMessage(msg.from, "nao encontrado")
+        }       
     }
+
 }
