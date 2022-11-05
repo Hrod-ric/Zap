@@ -72,8 +72,7 @@ module.exports = {
                                 "\n\nImagens\n- " + fs.readdirSync("./Dados/Imagens").map(p=>p).join("\n- ") +
                                 "\n\nAudios\n- " + fs.readdirSync("./Dados/Audios").map(p=>p).join("\n- ") +
                                 "\n\nVideos\n- " + fs.readdirSync("./Dados/Videos").map(p=>p).join("\n- ")
-                console.log(String);
-                //var String = "Lista de Arquivos\nAudios:\n- augh.mp3\n- pegar.mp3\n- sexo.mp3\n- violino.mp3\n\nVideos:\n- 1.mp4\n- 2.mp4\n- 3.mp4\n- 4.mp4\n- a.mp4"
+                //console.log(String);
                 await bot.sendMessage(numero, String)
                 msg.reply("Enviado!")
             }
@@ -92,7 +91,7 @@ module.exports = {
         var numero = (await contato(msg)).numero
         var chat = (await contato(msg)).chat
         var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
-        console.log(chat.id.user);
+        //console.log(chat.id.user);
         if(encontrou){
             await bot.sendMessage(numero, 
                 `Nome: ${encontrou.nome} \n`+
