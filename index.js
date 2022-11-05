@@ -30,8 +30,11 @@ bot.on("message", async msg=>{
 
     var menssagem = msg.body.substring(prefixo.length);
     var separarPrimeiraPalavra = menssagem.split(' ')[0];
-    var comandoSelecionado = comandos[separarPrimeiraPalavra]
-    //console.log(menssagem, separarPrimeiraPalavra, comandoSelecionado, comandos);
+    var listaComandos = Object.keys(comandos)
+    var keySelecionada = listaComandos.find(c=>c.split(", ").includes(separarPrimeiraPalavra))
+    var comandoSelecionado = comandos[keySelecionada]
+    //var comandoSelecionado = comandos[separarPrimeiraPalavra]
+
     if(comandoSelecionado){
         try {
             comandoSelecionado(msg,bot,whatsapp)
