@@ -38,12 +38,46 @@ const misto = async (texto)=>{
 }
 
 var comandos = []
-comandos.adicionarComandos("comandos","mostrar comandos",async (msg, bot, whatsapp)=>{
-    msg.reply(comandos.map(e=>e.nome+" - "+e.desc).join("\n"))
+//Comandos
+comandos.adicionarComandos("comandos","Mostra todos os comandos",async (msg, bot, whatsapp)=>{
+    var texto = comandos.map(e=>e.nome+" - "+e.desc).join("\n\n")
+    msg.reply(texto)
 })
 
+//Jogadores
+comandos.adicionarComandos("jogadores","Mostra todos os membros e funções",async (msg, bot, whatsapp)=>{
+    var participantes = await msg.getChat()
+    participantes = participantes.participants
+    var numeros = participantes.map(p=>p.id.user)
+    //var texto = "@" + numeros.join("\n@")
+
+    var lista = listar("PessoasFisicas")
+
+    var texto2 =    `Jogadores      Função \n`+
+                    "" + numeros.map(d=>{
+                        var encontrou = lista.find(p=>p.id == d)
+                        return encontrou.nome + 
+                        `           [${encontrou?.role}]`
+                    }).join("\n")
+
+    //var texto2 = `${encontrou.nome}`
+    console.log(texto2);
+
+
+    /*await bot.sendMessage(`Hello @${numero.id.user}`, {
+        mentions: [numero]
+    });*/
+
+    await bot.sendMessage(msg.from, texto2)
+    //await bot.sendMessage(msg.from, texto2, {mentions: participantes})
+
+
+    //var texto = comandos.map(e=>e.nome+" - "+e.desc).join("\n\n")
+    //msg.reply(texto)
+},["Admin"])
+
 //Listar
-comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sendo os grupos: Pessoas, Feiticos e Arquivos",async (msg, bot, whatsapp)=>{
     var comando = msg.body.toLowerCase().split(' ')[1]
     var numero = (await contato(msg)).numero
     texto = msg.body.toLowerCase().split(' ')[2]
@@ -51,7 +85,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
     var lista = []
 
     //Pessoas
-    lista.adicionarComandos("pes","mo",async()=>{
+    lista.adicionarComandos("pes","Pessoas",async()=>{
         if(texto){
             var String= "🔍População do "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String)
@@ -67,7 +101,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
     })
 
     //Feitiços
-    lista.adicionarComandos("fei","my",async()=>{
+    lista.adicionarComandos("fei","Feiticos",async()=>{
         if(texto){
             var String= "🔍Feiticos de "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String)
@@ -81,7 +115,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
     })
     
     //Arquivos
-    lista.adicionarComandos("arq","mu",async()=>{
+    lista.adicionarComandos("arq","Arquivos",async()=>{
         if(texto){
             var String= "🔍Lista de Arquivos\n"
                         +texto+"🔍\n- " + fs.readdirSync("./Dados/"+texto).map(p=>p).join("\n- ")
@@ -179,12 +213,12 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
 })
 
 //Adicionar
-comandos.adicionarComandos("adicionar","",async (msg)=>{
+comandos.adicionarComandos("adicionar","Cria um novo elemento na lista",async (msg)=>{
     var comando = msg.body.toLowerCase().split(' ')[1]
     var lista = []
 
     //Pessoas
-    lista.adicionarComandos("pessoas","mo",async()=>{
+    lista.adicionarComandos("pessoas","Pessoas",async()=>{
         var pessoa =  misto(msg.body)
         if(!pessoa?.id)return msg.reply("⚠️ É preciso adicionar um id!")
     
@@ -212,12 +246,12 @@ comandos.adicionarComandos("adicionar","",async (msg)=>{
 },["Admin"])
 
 //Alterar
-comandos.adicionarComandos("alterar","",(msg)=>{
+comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idade, Titulo, Descricao",(msg)=>{
     var comando = msg.body.toLowerCase().split(' ')[1]
     var lista = []
 
     //Ficha
-    lista.adicionarComandos("ficha","mo",async()=>{
+    lista.adicionarComandos("ficha","Ficha",async()=>{
         var listas = listar("Players")
         var numero = (await contato(msg)).numero
         var pessoa = listas.find(e=>e.contato == numero.replace("@c.us",""))
@@ -241,12 +275,12 @@ comandos.adicionarComandos("alterar","",(msg)=>{
             pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
     
             fs.writeFileSync("./Dados/Players/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
-            msg.reply("✅ Pessoa alterada " + pessoa.id)
+            msg.react("✅")
         }
     })
 
     //Pessoas
-    lista.adicionarComandos("pessoas","mo",async()=>{
+    lista.adicionarComandos("pessoas","Pessoas",async()=>{
         var listas = listar("Extra")
         var texto = msg.body.toLowerCase().split(" ")[2]
         var pessoa = listas.find(e=>e.id == texto)
@@ -292,7 +326,7 @@ comandos.adicionarComandos("alterar","",(msg)=>{
 })
 
 //Audio
-comandos.adicionarComandos("audio","",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("audio","Escolha um audio para que o bot mande",async (msg, bot, whatsapp)=>{
     var texto = msg.body.toLowerCase().split(' ')[1];
     try{
         var audio = await whatsapp.MessageMedia.fromFilePath("./Dados/Audios/"+texto+".mp3")
@@ -304,7 +338,7 @@ comandos.adicionarComandos("audio","",async (msg, bot, whatsapp)=>{
 })
 
 //Enviar
-comandos.adicionarComandos("enviar","",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",async (msg, bot, whatsapp)=>{
     try{
         var numero = msg.body.split(' ')[1];
             numero = numero.startsWith('@') ? numero.replace("@","") : numero
