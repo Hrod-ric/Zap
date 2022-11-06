@@ -53,11 +53,12 @@ comandos.adicionarComandos("jogadores","Mostra todos os membros e funções",asy
 
     var lista = listar("PessoasFisicas")
 
-    var texto2 =    `Jogadores      Função \n`+
+    var texto = `Jogadores      Função \n`
+    var texto2 =    texto+
                     "" + numeros.map(d=>{
                         var encontrou = lista.find(p=>p.id == d)
                         return encontrou.nome + 
-                        `           [${encontrou?.role}]`
+                        " ".repeat(20).slice(texto.length)+`[${encontrou?.role}]`
                     }).join("\n")
 
     //var texto2 = `${encontrou.nome}`
