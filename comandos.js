@@ -3,10 +3,12 @@ const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
     return Lista;
 }
-Array.prototype.adicionarComandos = function(nome, desc,func){
-    this.push({nome, desc, func})
+
+Array.prototype.adicionarComandos = function(nome, desc, func, roles=[]){
+    this.push({nome, desc, func, roles})
     return this
 }
+
 const contato = async (msg)=>{
     var chat = await msg.getChat()
     var contato = await msg.getContact();
@@ -14,12 +16,16 @@ const contato = async (msg)=>{
         numero = numero.includes('@c.us') ? numero : `${numero}@c.us`;
     return {chat,numero,contato};
 }
+const getInput = (msgString, removeArgs = 0) => {
+    return msgString.split(" ").filter((_, i)=>i>removeArgs).join(" ")
+} 
 
 const misto = (texto)=>{
     //const regExp = /(\nome:)(.*)(\n|\.)/i
     //const re = new RegExp(`${parametro}` + `(.*)(\n|\.)`, 'i');
     const re = /(?<=\n)(.*)(:)(.*)(?<=\.)/gi
     const textoSelecionado = texto.match(re)
+    if(!textoSelecionado) return;
     var atributos = textoSelecionado.map(p=>p.split(":")[0])
     var valores = textoSelecionado.map(p=>p.split(":")[1].replace(".","").substring(1))
     var input = `{ 
@@ -108,6 +114,8 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
 //Ficha
 comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async (msg, bot, whatsapp)=>{ 
     var Players=listar("Players")
+    //var contact = (await contato(msg))
+    //console.log(contact);
     var numero = (await contato(msg)).numero
     var chat = (await contato(msg)).chat
     var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
@@ -115,6 +123,7 @@ comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async 
         await bot.sendMessage(numero, 
             `Nome: ${encontrou.nome} \n`+
             `Idade: ${encontrou.idade}`+
+            `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
             `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:""}`+
             `${encontrou.habPassivas?"\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`+
             `${encontrou.feiticosAprendidos?"\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`)
@@ -156,7 +165,7 @@ comandos.adicionarComandos("adicionar","",async (msg)=>{
     //Pessoas
     lista.adicionarComandos("pessoas","mo",async()=>{
         var pessoa =  misto(msg.body)
-        if(!pessoa.id)return msg.reply("É preciso adicionar um id!")
+        if(!pessoa?.id)return msg.reply("É preciso adicionar um id!")
     
         var Lista = listar("Extra");
         var encontrou = Lista.find(p=>p.id == pessoa.id);
@@ -179,7 +188,7 @@ comandos.adicionarComandos("adicionar","",async (msg)=>{
         msg.reply("Categoria nao encontrada!")
     }
     
-})
+},["Admin"])
 
 //Alterar
 comandos.adicionarComandos("alterar","",(msg)=>{
@@ -190,8 +199,20 @@ comandos.adicionarComandos("alterar","",(msg)=>{
     lista.adicionarComandos("ficha","mo",async()=>{
         var listas = listar("Players")
         var numero = (await contato(msg)).numero
-        var encontrou = listas.find(e=>e.contato == numero.replace("@c.us",""))
-        if(encontrou) msg.reply("mec")
+        var pessoa = listas.find(e=>e.contato == numero.replace("@c.us",""))
+        if(pessoa) {
+            var input = getInput(msg.body, 1)
+            var obj = misto(input)
+                
+            pessoa.nome = obj.nome? obj.nome : pessoa.nome
+            pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
+            pessoa.idade = obj.idade? obj.idade : pessoa.idade
+            pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+            pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
+    
+            fs.writeFileSync("./Dados/Players/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
+            msg.reply("Pessoa alterada " + pessoa.id)
+        }
     })
 
     //Pessoas
@@ -217,7 +238,7 @@ comandos.adicionarComandos("alterar","",(msg)=>{
         }else{
             msg.reply("Pessoa nao existe!")
         }
-    })
+    },["Admin"])
 
     //Comando
     var comandoSelecionado = lista.find(e=>comando.startsWith(e.nome))
@@ -265,6 +286,6 @@ comandos.adicionarComandos("enviar","",async (msg, bot, whatsapp)=>{
     }catch{
         await bot.sendMessage(msg.from, "nao encontrado")
     }       
-})
+},["Admin"])
 
 module.exports = comandos

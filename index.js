@@ -6,10 +6,18 @@ const bot = new whatsapp.Client({
     }
 })
 const fs = require ("fs")
- 
+
+const listar = (pasta)=>{
+    var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
+    return Lista;
+}
+
+
 
 var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165","557187681493"]
-//'556792117043-1588125882'
+//Rpg "557183334339-1503676340"
+//La  "557187681493-1555160547"
+//Fof "556792117043-1588125882"
 const qrcode = require ("qrcode-terminal");
 //console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
 bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
@@ -21,7 +29,15 @@ bot.on("ready", ()=>{
 
 var prefixo = "/"
 bot.on("message", async msg=>{
-    var chat = await msg.getChat()
+    var list = listar("PessoasFisicas")
+    var chat = await msg.getChat();
+    var contato = await msg.getContact();
+    var id = contato.id.user
+    var usuario = list.find(e=>e.id==id)
+    if(!usuario)fs.writeFileSync("./Dados/PessoasFisicas/"+contato.name+" - "+ id + ".json", JSON.stringify({id, role:""}, null, 4), "utf8")
+
+    usuario = list.find(e=>e.id==id)
+    
 
     if(!forchat.includes(chat.id.user)) return;
     if(!msg.body.startsWith(prefixo)) return;
@@ -38,9 +54,14 @@ bot.on("message", async msg=>{
 
     if(comandoSelecionado){
         try {
-            comandoSelecionado.func(msg,bot,whatsapp)
+            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
+                comandoSelecionado.func(msg,bot,whatsapp)
+            }else{
+                msg.reply("Voce nao tem permissão para usar esse comando!")
+            }
         } catch (e) {
             msg.reply("Erro!");
+            console.log(e);
         }
     }
     else{
