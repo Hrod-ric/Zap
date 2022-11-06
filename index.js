@@ -27,19 +27,17 @@ bot.on("ready", ()=>{
     bot.sendMessage("557187681493@c.us", "Online metendo");
 })
 
-var prefixo = "/"
 bot.on("message", async msg=>{
-    var list = listar("PessoasFisicas")
     var chat = await msg.getChat();
+    if(!forchat.includes(chat.id.user)) return;if(!forchat.includes(chat.id.user)) return;
+    
+    var list = listar("PessoasFisicas")
     var contato = await msg.getContact();
     var id = contato.id.user
     var usuario = list.find(e=>e.id==id)
     if(!usuario)fs.writeFileSync("./Dados/PessoasFisicas/"+contato.name+" - "+ id + ".json", JSON.stringify({id, role:""}, null, 4), "utf8")
-
-    usuario = list.find(e=>e.id==id)
     
-
-    if(!forchat.includes(chat.id.user)) return;
+    var prefixo = "/"
     if(!msg.body.startsWith(prefixo)) return;
 
     delete require.cache[require.resolve('./comandos')];
@@ -57,7 +55,7 @@ bot.on("message", async msg=>{
             if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
                 comandoSelecionado.func(msg,bot,whatsapp)
             }else{
-                msg.reply("Voce nao tem permissão para usar esse comando!")
+                msg.react("💤")
             }
         } catch (e) {
             msg.reply("Erro!");

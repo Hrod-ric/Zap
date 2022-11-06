@@ -20,16 +20,18 @@ const getInput = (msgString, removeArgs = 0) => {
     return msgString.split(" ").filter((_, i)=>i>removeArgs).join(" ")
 } 
 
-const misto = (texto)=>{
+const misto = async (texto)=>{
     //const regExp = /(\nome:)(.*)(\n|\.)/i
     //const re = new RegExp(`${parametro}` + `(.*)(\n|\.)`, 'i');
     const re = /(?<=\n)(.*)(:)(.*)(?<=\.)/gi
     const textoSelecionado = texto.match(re)
+    //console.log("\n\n");
+    //console.log(re.exec(texto));
     if(!textoSelecionado) return;
     var atributos = textoSelecionado.map(p=>p.split(":")[0])
     var valores = textoSelecionado.map(p=>p.split(":")[1].replace(".","").substring(1))
     var input = `{ 
-        ${atributos.map((e, i)=>`"` + e + `"`+ " : " + `"`+ valores[i]+`"`).join(", ")}
+        ${atributos.map((e, i)=>`"` + e.toLowerCase() + `"`+ " : " + `"`+ valores[i]+`"`).join(", ")}
     }`
     var obj = JSON.parse(input)
     return obj;
@@ -51,50 +53,50 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
     //Pessoas
     lista.adicionarComandos("pes","mo",async()=>{
         if(texto){
-            var String= "População do "+texto+"\n- " + listar(texto).map(p=>p.nome).join("\n- ");
+            var String= "🔍População do "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String)
-            msg.reply("Enviado!")
+            msg.react("🆗")
             return
         }
-        var String =    "Lista de Pessoas"+
+        var String =    "🔍Lista de Pessoas🔍"+
                         "\n\nPlayers\n- " + listar("Players").map(p=>p.nome).join("\n- ") + 
                         "\n\nPovoado\n- " + listar("Povoado").map(p=>p.nome).join("\n- ") +
                         "\n\nRollenspiel\n- " + listar("Rollenspiel").map(p=>p.nome).join("\n- ")
         await bot.sendMessage(numero, String)
-        msg.reply("Enviado!")
+        msg.react("🆗")
     })
 
     //Feitiços
     lista.adicionarComandos("fei","my",async()=>{
         if(texto){
-            var String= "Feiticos de "+texto+"\n- " + listar(texto).map(p=>p.nome).join("\n- ");
+            var String= "🔍Feiticos de "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String)
-            msg.reply("Enviado!")
+            msg.react("🆗")
             return
         }
 
-        var String = "Lista de Feiticos\n- " + listar("Feiticos").map(p=>p.nome).join("\n- ")
+        var String = "🔍Lista de Feiticos🔍\n- " + listar("Feiticos").map(p=>p.nome).join("\n- ")
         await bot.sendMessage(numero, String)
-        msg.reply("Enviado!")
+        msg.react("🆗")
     })
     
     //Arquivos
     lista.adicionarComandos("arq","mu",async()=>{
         if(texto){
-            var String= "Lista de Arquivos\n"
-                        +texto+"\n- " + fs.readdirSync("./Dados/"+texto).map(p=>p).join("\n- ")
+            var String= "🔍Lista de Arquivos\n"
+                        +texto+"🔍\n- " + fs.readdirSync("./Dados/"+texto).map(p=>p).join("\n- ")
             await bot.sendMessage(numero, String)
-            msg.reply("Enviado!")
+            msg.react("🆗")
             return
         }
 
-        var String =    "Lista de Arquivos"+
+        var String =    "🔍Lista de Arquivos🔍"+
                         "\n\nImagens\n- " + fs.readdirSync("./Dados/Imagens").join("\n- ") +
                         "\n\nAudios\n- " + fs.readdirSync("./Dados/Audios").join("\n- ") +
                         "\n\nVideos\n- " + fs.readdirSync("./Dados/Videos").join("\n- ")
 
         await bot.sendMessage(numero, String)
-        msg.reply("Enviado!")
+        msg.react("🆗")
     })
 
     //Comando
@@ -104,10 +106,10 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo",asy
             comandoSelecionado.func()
         }catch (e){
             console.log(e);
-            msg.reply("Ocorreu um erro!")
+            msg.reply("⚠️ Ocorreu um erro!")
         }
     }else{
-        msg.reply("Lista nao encontrada!")
+        msg.reply("⚠️ Lista nao encontrada!")
     }
 })
 
@@ -116,19 +118,35 @@ comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async 
     var Players=listar("Players")
     //var contact = (await contato(msg))
     //console.log(contact);
+    var info = await msg.getInfo()
     var numero = (await contato(msg)).numero
     var chat = (await contato(msg)).chat
     var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
     if(encontrou){
-        await bot.sendMessage(numero, 
-            `Nome: ${encontrou.nome} \n`+
-            `Idade: ${encontrou.idade}`+
-            `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
-            `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:""}`+
-            `${encontrou.habPassivas?"\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`+
-            `${encontrou.feiticosAprendidos?"\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`)
+        var ficha = `${encontrou.nome} \n`+
+                    `Idade: ${encontrou.idade}`+
+                    `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
+                    `${encontrou.descricao?"\n\nDescrição: "+encontrou.descricao:""}`+
+                    `${encontrou.habPassivas?"\n\nHabilidades Passivas: "+encontrou.habPassivas.join(", "):""}`+
+                    `${encontrou.feiticosAprendidos?"\n\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`;
+
+        if(encontrou.imagem){
+            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+encontrou.imagem)
+            await bot.sendMessage(numero, imagem,{ caption: ficha, quotedMessageId: info.id._serialized });
+            msg.react("🆗")
+            return
         }
-        msg.reply("Enviado!")
+        if(encontrou.video){
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Videos/"+encontrou.video)
+            await bot.sendMessage(numero, video,{ sendVideoAsGif: true, quotedMessageId: info.id._serialized });
+            await bot.sendMessage(numero, ficha)
+            mmsg.react("🆗")
+            return
+        }
+
+        await bot.sendMessage(numero, ficha, {quotedMessageId: info.id._serialized})
+        msg.react("🆗")
+        }
 })
 
 //Consultar
@@ -137,21 +155,24 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
     var texto = msg.body.toLowerCase().split(' ').filter((_,i)=>i).join(" ")
     var encontrou = Lista.find(p=>p.id == texto);
 
+    var info = await msg.getInfo()
+
     try{
+        var ficha = `${encontrou.nome}`+
+                    `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
+                    `${encontrou.descricao?"\n\nDescrição: "+encontrou.descricao:"\nSem descrição"}`;
 
         if(encontrou.imagem){
             var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+encontrou.imagem)
-            if(encontrou.imagem.includes(".mp4")){
-                await bot.sendMessage(msg.from,imagem,{ sendVideoAsGif: true });
-            }else{
-                await bot.sendMessage(msg.from,imagem)
-            }
+            await bot.sendMessage(msg.from,imagem,{ caption: ficha, quotedMessageId: info.id._serialized });
+            return
         }
-        msg.reply(
-            `Nome: ${encontrou.nome}`+
-            `${encontrou.titulo?"\nConhecido como "+encontrou.titulo:"\nConhecido como "+encontrou.id}`+
-            `${encontrou.descricao?"\nDescrição: "+encontrou.descricao:"\nSem descrição"}`
-        )
+        if(encontrou.video){
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Videos/"+encontrou.video)
+            await bot.sendMessage(msg.from, video,{ sendVideoAsGif: true, caption: ficha, quotedMessageId: info.id._serialized });
+            return
+        }
+        msg.reply(ficha)
     }catch{
         msg.reply("Não foi encontrado!")
     }
@@ -165,14 +186,14 @@ comandos.adicionarComandos("adicionar","",async (msg)=>{
     //Pessoas
     lista.adicionarComandos("pessoas","mo",async()=>{
         var pessoa =  misto(msg.body)
-        if(!pessoa?.id)return msg.reply("É preciso adicionar um id!")
+        if(!pessoa?.id)return msg.reply("⚠️ É preciso adicionar um id!")
     
         var Lista = listar("Extra");
         var encontrou = Lista.find(p=>p.id == pessoa.id);
-        if(encontrou) return msg.reply("Essa pessoa ja foi adicionada!")
+        if(encontrou) return msg.reply("⚠️ Essa pessoa ja foi adicionada!")
     
         fs.writeFileSync("./Dados/Extra/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
-        msg.reply("Pessoa criada " + pessoa.id)
+        msg.reply("✅ Pessoa criada " + pessoa.id)
     })
 
     //Comando
@@ -182,10 +203,10 @@ comandos.adicionarComandos("adicionar","",async (msg)=>{
             comandoSelecionado.func()
         }catch (e){
             console.log(e);
-            msg.reply("Ocorreu um erro!")
+            msg.react("⚠️")
         }
     }else{
-        msg.reply("Categoria nao encontrada!")
+        msg.reply("⚠️ Categoria nao encontrada!")
     }
     
 },["Admin"])
@@ -201,9 +222,18 @@ comandos.adicionarComandos("alterar","",(msg)=>{
         var numero = (await contato(msg)).numero
         var pessoa = listas.find(e=>e.contato == numero.replace("@c.us",""))
         if(pessoa) {
-            var input = getInput(msg.body, 1)
-            var obj = misto(input)
-                
+            //var input = getInput(msg.body, 1)
+            var input = msg.body.split("ficha")[1]
+
+            var texto = input.split("\n")
+            texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+            input = texto.join(" \n")
+
+            var obj = await misto(input)
+            //if(input.charAt(input.length - 1) != ".") input+=".";
+
+            if(!obj)return msg.reply("⚠️ Incorreto!")
+
             pessoa.nome = obj.nome? obj.nome : pessoa.nome
             pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
             pessoa.idade = obj.idade? obj.idade : pessoa.idade
@@ -211,7 +241,7 @@ comandos.adicionarComandos("alterar","",(msg)=>{
             pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
     
             fs.writeFileSync("./Dados/Players/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
-            msg.reply("Pessoa alterada " + pessoa.id)
+            msg.reply("✅ Pessoa alterada " + pessoa.id)
         }
     })
 
@@ -222,8 +252,15 @@ comandos.adicionarComandos("alterar","",(msg)=>{
         var pessoa = listas.find(e=>e.id == texto)
         if(pessoa){
             try{
-                var obj = misto(msg.body)
-                
+                var input = msg.body.split("pessoas")[1]
+
+                var texto = input.split("\n")
+                texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+                input = texto.join(" \n")
+
+                var obj = await misto(input)
+                if(!obj)return msg.reply("⚠️ Incorreto!")
+
                 pessoa.nome = obj.nome? obj.nome : pessoa.nome
                 pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
                 pessoa.idade = obj.idade? obj.idade : pessoa.idade
@@ -231,12 +268,12 @@ comandos.adicionarComandos("alterar","",(msg)=>{
                 pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
         
                 fs.writeFileSync("./Dados/Extra/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
-                msg.reply("Pessoa alterada " + pessoa.id)
+                msg.reply("✅ Pessoa alterada " + pessoa.id)
             }catch(e){
                 msg.reply(e)
             }
         }else{
-            msg.reply("Pessoa nao existe!")
+            msg.reply("⚠️ Pessoa nao existe!")
         }
     },["Admin"])
 
@@ -247,10 +284,10 @@ comandos.adicionarComandos("alterar","",(msg)=>{
             comandoSelecionado.func()
         }catch (e){
             console.log(e);
-            msg.reply("Ocorreu um erro!")
+            msg.reply("⚠️ Ocorreu um erro!")
         }
     }else{
-        msg.reply("Categoria nao encontrada!")
+        msg.reply("⚠️ Categoria nao encontrada!")
     }
 })
 
@@ -261,7 +298,7 @@ comandos.adicionarComandos("audio","",async (msg, bot, whatsapp)=>{
         var audio = await whatsapp.MessageMedia.fromFilePath("./Dados/Audios/"+texto+".mp3")
         await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
     }catch{
-        await bot.sendMessage(msg.from,"Não encontrado")
+        await bot.sendMessage(msg.from,"⚠️ Não encontrado")
     }
     
 })
@@ -284,8 +321,9 @@ comandos.adicionarComandos("enviar","",async (msg, bot, whatsapp)=>{
             await bot.sendMessage(numero, video, { sendAudioAsVoice: true })
         }
     }catch{
-        await bot.sendMessage(msg.from, "nao encontrado")
+        await bot.sendMessage(msg.from, "⚠️ nao encontrado")
     }       
 },["Admin"])
 
+//⏳⌛💰🛒📚📌🔍🔎🔓🔒⌚🏹🏋️‍♂️🤸‍♀️🤺🥊❎✅🆗💤〽️⚠️👁️‍🗨️💪🥷🧙‍♂️
 module.exports = comandos

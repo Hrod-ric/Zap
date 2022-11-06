@@ -2,6 +2,6 @@
     "id"  :   "foxy",
     "nome"  :   "_*Foxy Ryuzaki*_",
     "idade" :   "indefinido",
-    "imagem":   "",
+    "imagem":   "foxy.png",
     "descricao" : "Medico famoso capaz de manipular runas complexas"
 }
