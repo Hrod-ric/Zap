@@ -1,5 +1,6 @@
 const whatsapp = require("whatsapp-web.js")
 const bot = new whatsapp.Client({
+    authStrategy: new whatsapp.LocalAuth(),
     puppeteer: {
         executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     }
@@ -10,7 +11,7 @@ const fs = require ("fs")
 var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165","557187681493"]
 //'556792117043-1588125882'
 const qrcode = require ("qrcode-terminal");
-
+//console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
 bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
 
 bot.on("ready", ()=>{
@@ -29,15 +30,15 @@ bot.on("message", async msg=>{
     var comandos = require("./comandos");
 
     var menssagem = msg.body.substring(prefixo.length);
-    var separarPrimeiraPalavra = menssagem.split(' ')[0];
-    var listaComandos = Object.keys(comandos)
-    var keySelecionada = listaComandos.find(c=>c.split(", ").includes(separarPrimeiraPalavra))
-    var comandoSelecionado = comandos[keySelecionada]
-    //var comandoSelecionado = comandos[separarPrimeiraPalavra]
+    var separarPrimeiraPalavra = menssagem.toLowerCase().split(' ')[0];
+    //var listaComandos = Object.keys(comandos)
+    //var keySelecionada = listaComandos.find(c=>c.split(", ").includes(separarPrimeiraPalavra))
+    //var comandoSelecionado = comandos[keySelecionada]
+    var comandoSelecionado= comandos.find(e=>e.nome.startsWith(separarPrimeiraPalavra))
 
     if(comandoSelecionado){
         try {
-            comandoSelecionado(msg,bot,whatsapp)
+            comandoSelecionado.func(msg,bot,whatsapp)
         } catch (e) {
             msg.reply("Erro!");
         }
