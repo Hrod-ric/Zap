@@ -113,7 +113,6 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
         var numero = (await contato(msg)).numero
         var pessoa = listas.find(e=>e.contato == numero.replace("@c.us",""))
         if(pessoa) {
-            //var input = getInput(msg.body, 1)
             var input = msg.body.split("ficha")[1]
 
             var texto = input.split("\n")
@@ -210,8 +209,9 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
     var usuario = list.find(e=>e.contato==contat)
 
     var comando = msg.body.toLowerCase().split(' ')[1]
+    comando = comando.split('\n')[0]
     var comandoSelecionado = lista.find(e=>e.nome.startsWith(comando))
-
+    
     if(comandoSelecionado) {
         if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
             comandoSelecionado.func()
@@ -514,6 +514,42 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         }
     },["Admin"])
 
+    //Pegar
+    lista.adicionarComandos("pegar","", async ()=>{
+        /*var texto = await msg.getChat()
+        var texto2 = await texto.fetchMessages({limit:10})
+        console.log(texto2);*/
+        var variavel = 0;
+        var input = msg.body.toLowerCase().split("misc pegar ")[1]
+        input = input.split("\n")[0]
+
+        //var texto = await msg.getChat().then(e=>e.fetchMessages({limit:Infinity, fromMe:false}))
+
+        
+
+        await msg.getChat().then(e=>e.fetchMessages({limit:Infinity, fromMe:false})).then(ms=>{
+
+                //console.log(msg.id.id);
+                //console.log(bot);
+                var encontrou = ms  .filter(m=>m.id.id != msg.id.id )
+                                    .filter(m=>m.author)
+                                    .filter(m=>!m.body.toLowerCase().startsWith("/"))
+                                    .filter(m=>m.body.toLowerCase().includes(input))
+                fs.writeFileSync("./Dados/Documentos/"+ "7" + ".json", JSON.stringify(encontrou, null, 4), "utf8");
+                
+
+                //console.log(input);
+                /*
+                if(!encontrou.length) return msg.react("⚠️")
+                if(encontrou.length >= 3) msg.reply(`encontrou ${encontrou.length} mensagens, maior que o limite de 3 mensagens`)
+
+                encontrou.filter((_,i)=>i<3).forEach(e=>bot.sendMessage(msg.from, `pesquisando por: ${input}\nencontrado`,{ quotedMessageId: e.id._serialized }))
+                */
+                //bot.sendMessage(msg.from, "encontrou",{ quotedMessageId: encontrou.id._serialized });
+                //console.log(encontrou);
+        })
+    })
+
     //salvar
     lista.adicionarComandos("salvar","Salva a mensagem", async ()=>{
         if(msg.hasQuotedMsg){
@@ -554,7 +590,7 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
     else{
         msg.react("⚠️")
     }
-},["Admin"])
+})
 
 
 //⏳⌛💰🛒📚📌🔍🔎🔓🔒⌚🏹🏋️‍♂️🤸‍♀️🤺🥊❎✅🆗💤〽️⚠️👁️‍🗨️💪🥷🧙‍♂️
