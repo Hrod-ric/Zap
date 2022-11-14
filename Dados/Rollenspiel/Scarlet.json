@@ -1,7 +1,8 @@
 {
-    "id"  :   "scarlet",
-    "nome"  :   "Scarlet",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Engenharia, mecanica"
+    "id": "scarlet",
+    "nome": "Scarlet",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Engenharia, mecanica",
+    "lugar": "Rollenspiel"
 }

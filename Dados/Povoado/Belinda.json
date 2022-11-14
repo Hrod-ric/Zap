@@ -1,7 +1,8 @@
 {
-    "id"  :   "belinda",
-    "nome"  :   "Belinda",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Tsundere"
+    "id": "belinda",
+    "nome": "Belinda",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Tsundere",
+    "lugar": "Povoado"
 }

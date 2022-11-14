@@ -1,7 +1,8 @@
 {
-    "id"  :   "theon",
-    "nome"  :   "Theon",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Arquimago, protetor do Max"
+    "id": "theon",
+    "nome": "Theon",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Arquimago, protetor do Max",
+    "lugar": "Rollenspiel"
 }

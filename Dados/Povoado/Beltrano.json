@@ -1,7 +1,8 @@
 {
-    "id"  :   "beltrano",
-    "nome"  :   "Beltrano",
-    "idade" :   "não lembro",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "beltrano",
+    "nome": "Beltrano",
+    "idade": "não lembro",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Povoado"
 }

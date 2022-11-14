@@ -1,4 +1,6 @@
 const fs = require("fs")
+const Util = require("whatsapp-web.js/src/util/Util")
+Util.setFfmpegPath("ffmpeg")
 
 const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
@@ -21,13 +23,13 @@ const getInput = (msgString, removeArgs = 0) => {
 const misto = async (texto)=>{
     //const regExp = /(\nome:)(.*)(\n|\.)/i
     //const re = new RegExp(`${parametro}` + `(.*)(\n|\.)`, 'i');
-    const re = /(?<=\n)(.*)(:)(.*)(?<=\.)/gi
+    const re = /(?<=\n)(.*)(:)(.*)(?<=\$)/gi
     const textoSelecionado = texto.match(re)
     //console.log("\n\n");
     //console.log(re.exec(texto));
     if(!textoSelecionado) return;
     var atributos = textoSelecionado.map(p=>p.split(":")[0])
-    var valores = textoSelecionado.map(p=>p.split(":")[1].replace(".","").substring(1))
+    var valores = textoSelecionado.map(p=>p.split(":")[1].replace("$","").substring(1))
     var input = `{ 
         ${atributos.map((e, i)=>`"` + e.toLowerCase() + `"`+ " : " + `"`+ valores[i]+`"`).join(", ")}
     }`
@@ -39,7 +41,6 @@ var comandos = []
 
 //Adicionar
 comandos.adicionarComandos("adicionar","Cria um novo elemento na lista",async (msg)=>{
-    var comando = msg.body.toLowerCase().split(' ')[1]
     var lista = []
 
     //Pessoas
@@ -47,12 +48,12 @@ comandos.adicionarComandos("adicionar","Cria um novo elemento na lista",async (m
         var input = msg.body.split("pessoas")[1]
 
             var texto = input.split("\n")
-            texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+            texto = texto.map(p=>(p.charAt(p.length-1) != "$")?p+="$":p)
             input = texto.join(" \n")
 
         var pessoa =  await misto(input)
-        //console.log(pessoa);
         if(!pessoa?.id)return msg.react("⚠️")
+        if(!pessoa?.lugar)return msg.react("⚠️")
     
         var Lista = listar("Extra");
         var encontrou = Lista.find(p=>p.id == pessoa.id);
@@ -88,8 +89,9 @@ comandos.adicionarComandos("adicionar","Cria um novo elemento na lista",async (m
     var usuario = list.find(e=>e.contato==contat)
 
     var comando = msg.body.toLowerCase().split(' ')[1]
+    comando = comando.split('\n')[0]
     var comandoSelecionado = lista.find(e=>e.nome.startsWith(comando))
-
+    
     if(comandoSelecionado) {
         if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
             comandoSelecionado.func()
@@ -116,7 +118,7 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
             var input = msg.body.split("ficha")[1]
 
             var texto = input.split("\n")
-            texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+            texto = texto.map(p=>(p.charAt(p.length-1) != "$")?p+="$":p)
             input = texto.join(" \n")
 
             var obj = await misto(input)
@@ -127,39 +129,84 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
             pessoa.nome = obj.nome? obj.nome : pessoa.nome
             pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
             pessoa.idade = obj.idade? obj.idade : pessoa.idade
-            pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+
             pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
-    
-            fs.writeFileSync("./Dados/Players/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
+            if(pessoa.imagem == " ") pessoa.imagem == "";
+            pessoa.video = obj.video? obj.video : pessoa.video
+            if(pessoa.video == " ") pessoa.video == "";
+            pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+
+            pessoa.lugar = obj.lugar? obj.lugar : pessoa.lugar
+            
+            fs.writeFileSync("./Dados/Players/"+pessoa.usuario + ".json", JSON.stringify(pessoa, null, 4), "utf8")
             msg.react("✅")
         }
     },)
 
     //Pessoas
     lista.adicionarComandos("pessoas","Pessoas",async()=>{
+        
+        var lugar = msg.body.toLowerCase().split("\n")[0]
+        lugar = lugar.split(" ")[2]
+        if(lugar == "povoado" || lugar == "rollenspiel"){
+            var input = msg.body.split(lugar)[1]
+            var texto = input.split("\n")
+                texto = texto.map(p=>(p.charAt(p.length-1) != "$")?p+="$":p)
+                input = texto.join(" \n")
+
+                var listas = listar(lugar)
+                for(i=0 ; i < listas.length ; i++){
+                    var pessoa = listas[i]
+                    var obj = await misto(input)
+
+                    if(!obj)return msg.react("⚠️")
+
+                    pessoa.nome = obj.nome? obj.nome : pessoa.nome
+                    pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
+                    pessoa.idade = obj.idade? obj.idade : pessoa.idade
+
+                    pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
+                    if(pessoa.imagem == " ") pessoa.imagem == "";
+                    pessoa.video = obj.video? obj.video : pessoa.video
+                    if(pessoa.video == " ") pessoa.video == "";
+                    pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+
+                    pessoa.lugar = obj.lugar? obj.lugar : pessoa.lugar
+
+                    fs.writeFileSync("./Dados/"+pessoa.lugar+"/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
+                    msg.react("〽️")
+                }
+            return
+        }
+
+        var input = msg.body.split("pessoas")[1]
+        var texto = input.split("\n")
+
         var listas = listar("Players").concat(listar("Povoado"),listar("Rollenspiel"),listar("Extra"))
-        var texto = msg.body.toLowerCase().split("\n")[0]
-        texto = texto.split(" ")[2]
-        var pessoa = listas.find(e=>e.id == texto)
+        var pessoa = listas.find(e=>e.id == texto[0].substring(1))
         //console.log(texto);
         if(pessoa){
             try{
-                var input = msg.body.split("pessoas")[1]
-
-                var texto = input.split("\n")
-                texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+                texto = texto.map(p=>(p.charAt(p.length-1) != "$")?p+="$":p)
                 input = texto.join(" \n")
-
+                console.log(input);
                 var obj = await misto(input)
+                console.log(obj);
                 if(!obj)return msg.react("⚠️")
 
                 pessoa.nome = obj.nome? obj.nome : pessoa.nome
                 pessoa.titulo = obj.titulo? obj.titulo : pessoa.titulo
                 pessoa.idade = obj.idade? obj.idade : pessoa.idade
-                pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+                
                 pessoa.imagem = obj.imagem? obj.imagem : pessoa.imagem
+                if(pessoa.imagem == " ") pessoa.imagem == "";
+                pessoa.video = obj.video? obj.video : pessoa.video
+                if(pessoa.video == " ") pessoa.video == "";
+                pessoa.descricao = obj.descricao? obj.descricao : pessoa.descricao
+
+                pessoa.lugar = obj.lugar? obj.lugar : pessoa.lugar
         
-                fs.writeFileSync("./Dados/Extra/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
+                fs.writeFileSync("./Dados/"+pessoa.lugar+"/"+pessoa.id + ".json", JSON.stringify(pessoa, null, 4), "utf8")
                 msg.react("✅")
             }catch(e){
                 msg.reply(e)
@@ -181,7 +228,7 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
                 var input = msg.body.split("feiticos")[1]
 
                 var texto = input.split("\n")
-                texto = texto.map(p=>(p.charAt(p.length-1) != ".")?p+=".":p)
+                texto = texto.map(p=>(p.charAt(p.length-1) != "$")?p+="$":p)
                 input = texto.join(" \n")
 
                 var obj = await misto(input)
@@ -235,7 +282,7 @@ comandos.adicionarComandos("audio","Escolha um audio para que o bot mande",async
         msg.react("⚠️")
     }
     
-},["Jogador","Admin"])
+})
 
 //Comandos
 comandos.adicionarComandos("comandos","Mostra todos os comandos",async (msg, bot, whatsapp)=>{
@@ -257,12 +304,12 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
                     `${encontrou.descricao?"\n\nDescrição: "+encontrou.descricao:"\nSem descrição"}`;
 
         if(encontrou.imagem){
-            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+encontrou.imagem)
+            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
             await bot.sendMessage(msg.from,imagem,{ caption: ficha, quotedMessageId: info.id._serialized });
             return
         }
         if(encontrou.video){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Videos/"+encontrou.video)
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
             await bot.sendMessage(msg.from, video,{ sendVideoAsGif: true, caption: ficha, quotedMessageId: info.id._serialized });
             return
         }
@@ -270,22 +317,27 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
     }catch{
         msg.react("⚠️")
     }
-},["Jogador","Admin"])
+})
 
 //Enviar
 comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",async (msg, bot, whatsapp)=>{
     try{
         var numero = msg.body.split(' ')[1];
             numero = numero.startsWith('@') ? numero.replace("@","") : numero
-            numero = numero.includes('@g.us') ? numero :
+            numero = numero.includes('-') ? `${numero}@g.us` :
             numero = numero.includes('@c.us') ? numero : `${numero}@c.us`;
     
-        const re = /(55.{10,11})/gi
+        if(numero.includes("@c.us")){
+            var re = /(55.{10,11})/gi
+        }else{
+            var re = /(55.{10,11}-.{10,11})/gi
+        }
         var texto = msg.body.split(re)[2];
+        //console.log(texto);
         
 
         if(texto.includes(".mp4")){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Videos/"+texto)
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+texto)
             await bot.sendMessage(numero, video, { sendVideoAsGif: true })   
             msg.react("✅") 
         }else if(texto.includes(".mp3")){
@@ -296,7 +348,7 @@ comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",as
     }catch{
         msg.react("⚠️")
     }       
-},["Admin"])
+})
 
 //Ficha
 comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async (msg, bot, whatsapp)=>{ 
@@ -316,16 +368,16 @@ comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async 
                     `${encontrou.feiticosAprendidos?"\n\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`;
 
         if(encontrou.imagem){
-            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Imagens/"+encontrou.imagem)
+            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
             await bot.sendMessage(numero, imagem,{ caption: ficha, quotedMessageId: info.id._serialized });
             msg.react("🆗")
             return
         }
         if(encontrou.video){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Videos/"+encontrou.video)
+            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
             await bot.sendMessage(numero, video,{ sendVideoAsGif: true, quotedMessageId: info.id._serialized });
             await bot.sendMessage(numero, ficha)
-            mmsg.react("🆗")
+            msg.react("🆗")
             return
         }
 
@@ -343,7 +395,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
     var lista = []
 
     //Pessoas
-    lista.adicionarComandos("pes","Pessoas",async()=>{
+    lista.adicionarComandos("pessoas","Pessoas",async()=>{
         if(texto){
             var String= "🔍População do "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String, {quotedMessageId: info.id._serialized})
@@ -359,7 +411,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
     })
 
     //Feitiços
-    lista.adicionarComandos("fei","Feiticos",async()=>{
+    lista.adicionarComandos("feiticos","Feiticos",async()=>{
         if(texto){
             var String= "🔍Feiticos de "+texto+"🔍\n- " + listar(texto).map(p=>p.nome).join("\n- ");
             await bot.sendMessage(numero, String, {quotedMessageId: info.id._serialized})
@@ -373,7 +425,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
     })
     
     //Arquivos
-    lista.adicionarComandos("arq","Arquivos",async()=>{
+    lista.adicionarComandos("arquivos","Arquivos",async()=>{
         if(texto){
             var String= "🔍Lista de Arquivos\n"
                         +texto+"🔍\n- " + fs.readdirSync("./Dados/"+texto).map(p=>p).join("\n- ")
@@ -383,9 +435,9 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
         }
 
         var String =    "🔍Lista de Arquivos🔍"+
-                        "\n\nImagens\n- " + fs.readdirSync("./Dados/Imagens").join("\n- ") +
+                        "\n\nImagens\n- " + fs.readdirSync("./Dados/Image").join("\n- ") +
                         "\n\nAudios\n- " + fs.readdirSync("./Dados/Audios").join("\n- ") +
-                        "\n\nVideos\n- " + fs.readdirSync("./Dados/Videos").join("\n- ")
+                        "\n\nVideos\n- " + fs.readdirSync("./Dados/Video").join("\n- ")
 
         await bot.sendMessage(numero, String, {quotedMessageId: info.id._serialized})
         msg.react("🆗")
@@ -409,7 +461,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
     else{
         msg.react("⚠️")
     }
-},["Jogador","Admin"])
+})
 
 //Misc
 comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar", async (msg, bot, whatsapp)=>{
@@ -451,6 +503,36 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         }
     },["Admin"])
 
+    //Baixar
+    lista.adicionarComandos("baixar","baixa o video", async ()=>{
+
+        var texto = msg.body.substring(13).toLowerCase()
+
+        if(!texto) texto = video_imagem.filename + video_imagem.filesize
+
+        var video_imagem = await msg.downloadMedia()
+
+        var type = video_imagem.mimetype.split("/")
+
+        var list = [fs.readdirSync("./Dados/"+type[0]).map(p=>p).join(", ")]
+
+        var encontrou = list.filter(e=>e == (texto + "." + type[1]))
+
+        if(encontrou == []) return msg.react("❎")
+
+        fs.writeFileSync("./Dados/" + type[0] + "/" + texto + "." + type[1] , video_imagem.data,"base64")
+        msg.react("✅")
+    })
+
+    //Figurinha
+    lista.adicionarComandos("figura","transforma em figurinha", async ()=>{
+        if(!msg.hasMedia)return
+
+        var video_imagem = await msg.downloadMedia()
+        await bot.sendMessage(msg.from, video_imagem, { sendMediaAsSticker: true })
+        msg.react("✅")
+    })
+
     //Horario
     lista.adicionarComandos("horario","Mostra o horario", async ()=>{
         var data = new Date()
@@ -486,7 +568,7 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
     lista.adicionarComandos("jogadores","Mostra todos os membros e funções",async ()=>{
         var participantes = await msg.getChat()
         participantes = participantes.participants
-        console.log(participantes);
+        //console.log(participantes);
         var numeros = participantes.map(p=>p.id.user)
         var info = await msg.getInfo()
         //var texto = "@" + numeros.join("\n@")
@@ -502,6 +584,7 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
                         }).join("\n")+"```"
 
         await bot.sendMessage(msg.from, texto2, {quotedMessageId: info.id._serialized})
+        msg.react("✅")
 
     },["Jogador","Admin"])
 
@@ -509,44 +592,34 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
     lista.adicionarComandos("marcar","Marca a mensagem", async ()=>{
         if(msg.hasQuotedMsg){
             var texto = await msg.getQuotedMessage()
-            console.log(texto);
+            //console.log(texto);
             await bot.sendMessage(msg.from, "marcado",{ quotedMessageId: texto.id._serialized });
         }
     },["Admin"])
 
     //Pegar
     lista.adicionarComandos("pegar","", async ()=>{
-        /*var texto = await msg.getChat()
-        var texto2 = await texto.fetchMessages({limit:10})
-        console.log(texto2);*/
-        var variavel = 0;
+
         var input = msg.body.toLowerCase().split("misc pegar ")[1]
         input = input.split("\n")[0]
 
-        //var texto = await msg.getChat().then(e=>e.fetchMessages({limit:Infinity, fromMe:false}))
+        var data = new Date()
+        var data = data.toString().split(" ")
+        var tempo = " - " + data.filter((_,i)=>i<4).join(" ") + " - " + data[4].split(":").join(" ")
 
-        
+        await msg.getChat().then(e=>e.fetchMessages({limit:50000000})).then(ms=>{
+            fs.writeFileSync("./Dados/Documentos/"+ tempo + ".json", JSON.stringify(ms, null, 4), "utf8");
+            var encontrou = ms  .filter(m=>m.id.id != msg.id.id )
+                                .filter(m=>!m.id.fromMe)
+                                .filter(m=>!m.body.startsWith("/"))
+                                .filter(m=>m.body.toLowerCase().split("\n")[0].includes(input))
+                                encontrou.reverse()
 
-        await msg.getChat().then(e=>e.fetchMessages({limit:Infinity, fromMe:false})).then(ms=>{
+            if(!encontrou.length) return msg.react("⚠️")
+            if(encontrou.length >= 3) msg.reply(`${input} foi citado ${encontrou.length} vezes, as ultimas 3 mensagens serão marcadas`)
 
-                //console.log(msg.id.id);
-                //console.log(bot);
-                var encontrou = ms  .filter(m=>m.id.id != msg.id.id )
-                                    .filter(m=>m.author)
-                                    .filter(m=>!m.body.toLowerCase().startsWith("/"))
-                                    .filter(m=>m.body.toLowerCase().includes(input))
-                fs.writeFileSync("./Dados/Documentos/"+ "7" + ".json", JSON.stringify(encontrou, null, 4), "utf8");
-                
-
-                //console.log(input);
-                /*
-                if(!encontrou.length) return msg.react("⚠️")
-                if(encontrou.length >= 3) msg.reply(`encontrou ${encontrou.length} mensagens, maior que o limite de 3 mensagens`)
-
-                encontrou.filter((_,i)=>i<3).forEach(e=>bot.sendMessage(msg.from, `pesquisando por: ${input}\nencontrado`,{ quotedMessageId: e.id._serialized }))
-                */
-                //bot.sendMessage(msg.from, "encontrou",{ quotedMessageId: encontrou.id._serialized });
-                //console.log(encontrou);
+            encontrou.filter((_,i)=>i<3).forEach(e=>bot.sendMessage(msg.from, `.`,{ quotedMessageId: e.id._serialized }))
+            msg.react("✅")
         })
     })
 

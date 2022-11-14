@@ -1,6 +1,6 @@
 const whatsapp = require("whatsapp-web.js")
 const bot = new whatsapp.Client({
-    authStrategy: new whatsapp.LocalAuth(),
+    //authStrategy: new whatsapp.LocalAuth(),
     puppeteer: {
         executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     }

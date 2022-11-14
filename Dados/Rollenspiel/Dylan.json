@@ -1,8 +1,9 @@
 {
-    "id"    :   "dylan",
-    "nome"  :   "_*Dylan*_",
-    "titulo":   "",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "dylan",
+    "nome": "_*Dylan*_",
+    "titulo": "",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Rollenspiel"
 }

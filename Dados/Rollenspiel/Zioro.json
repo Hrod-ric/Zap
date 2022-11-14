@@ -1,8 +1,9 @@
 {
-    "id"    :   "zioro",
-    "nome"  :   "_*Zioro Zoldycky*_",
-    "titulo":   "",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "zioro",
+    "nome": "_*Zioro Zoldycky*_",
+    "titulo": "",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Rollenspiel"
 }

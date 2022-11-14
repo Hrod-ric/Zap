@@ -1,7 +1,8 @@
 {
-    "id"  :   "giovanna",
-    "nome"  :   "Giovanna",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Governanta e contadora"
+    "id": "giovanna",
+    "nome": "Giovanna",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Governanta e contadora",
+    "lugar": "Rollenspiel"
 }

@@ -1,8 +1,10 @@
 {
-    "id"    :   "vali",
-    "nome"  :   "_*Vali Lucifer*_",
-    "titulo":   "Pedofilo Cego",
-    "idade" :   "indefinido",
-    "imagem":   "vali.png",
-    "descricao" : "Um jovem aventureiro e pai adotivo de três crianças"
+    "id": "vali",
+    "nome": "_*Vali Lucifer*_",
+    "titulo": "Pedofilo Cego",
+    "idade": "indefinido",
+    "imagem": "gatocalvo.jpeg",
+    "video": "",
+    "descricao": "Um jovem aventureiro e pai adotivo de três crianças",
+    "lugar": "Rollenspiel"
 }

@@ -1,7 +1,8 @@
 {
-    "id"  :   "thomas",
-    "nome"  :   "Thomas",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Tenente"
+    "id": "thomas",
+    "nome": "Thomas",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Tenente",
+    "lugar": "Rollenspiel"
 }

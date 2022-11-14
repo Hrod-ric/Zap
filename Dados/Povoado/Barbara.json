@@ -1,7 +1,8 @@
 {
-    "id"  :   "barbara",
-    "nome"  :   "Barbara",
-    "idade" :   "não lembro",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "barbara",
+    "nome": "Barbara",
+    "idade": "não lembro",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Povoado"
 }

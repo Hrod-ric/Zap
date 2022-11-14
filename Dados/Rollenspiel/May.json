@@ -1,8 +1,9 @@
 {
-    "id"    :   "may",
-    "nome"  :   "_*May Hearthfilia*_",
-    "titulo":   "",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "may",
+    "nome": "_*May Hearthfilia*_",
+    "titulo": "",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Rollenspiel"
 }

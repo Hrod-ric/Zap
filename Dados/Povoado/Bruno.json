@@ -1,7 +1,8 @@
 {
-    "id"  :   "bruno",
-    "nome"  :   "Bruno",
-    "idade" :   "não lembro",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "bruno",
+    "nome": "Bruno",
+    "idade": "não lembro",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Povoado"
 }

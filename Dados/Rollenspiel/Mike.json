@@ -1,8 +1,9 @@
 {
-    "id"    :   "mike",
-    "nome"  :   "_*Mike*_",
-    "titulo":   "",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "mike",
+    "nome": "_*Mike*_",
+    "titulo": "",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Rollenspiel"
 }

@@ -1,7 +1,8 @@
 {
-    "id"  :   "bento",
-    "nome"  :   "Bento",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Responsavel"
+    "id": "bento",
+    "nome": "Bento",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Responsavel",
+    "lugar": "Povoado"
 }

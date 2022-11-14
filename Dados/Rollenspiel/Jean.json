@@ -1,7 +1,8 @@
 {
-    "id"  :   "jean",
-    "nome"  :   "Jean",
-    "idade" :   "indefinido",
-    "imagem":   "jean.png",
-    "descricao" : "Caçador de recompensas, ajudante da Scarlet"
+    "id": "jean",
+    "nome": "Jean",
+    "idade": "indefinido",
+    "imagem": "jean.png",
+    "descricao": "Caçador de recompensas, ajudante da Scarlet",
+    "lugar": "Rollenspiel"
 }

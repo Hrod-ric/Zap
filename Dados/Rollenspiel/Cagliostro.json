@@ -1,7 +1,8 @@
 {
-    "id"  :   "cagliostro",
-    "nome"  :   "Cagliostro",
-    "idade" :   "indefinido",
-    "imagem":   "",
-    "descricao" : "Contador do Aleksander"
+    "id": "cagliostro",
+    "nome": "Cagliostro",
+    "idade": "indefinido",
+    "imagem": "",
+    "descricao": "Contador do Aleksander",
+    "lugar": "Rollenspiel"
 }

@@ -1,7 +1,8 @@
 {
-    "id"  :   "betina",
-    "nome"  :   "Betina",
-    "idade" :   "não lembro",
-    "imagem":   "",
-    "descricao" : ""
+    "id": "betina",
+    "nome": "Betina",
+    "idade": "não lembro",
+    "imagem": "",
+    "descricao": "",
+    "lugar": "Povoado"
 }
