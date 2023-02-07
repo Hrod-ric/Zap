@@ -606,6 +606,48 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         }
     },["Admin"])
 
+    //Mochila
+    comandos.adicionarComandos("mochila","",async (msg, bot, whatsapp)=>{ 
+        var lista = [];
+
+        lista.adicionarComandos("checar","",async ()=>{ 
+            var Players=listar("Players")
+            var Mochilas=listar("Mochilas")
+            var numero = (await contato(msg)).numero
+            var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
+            var encontrou2 = Mochilas.find(p=>p.nome == encontrou.nome);
+            if(encontrou2)console.log(encontrou.mochila)
+                var ficha = `Mochila: ${encontrou2.mochila.tipo}`+
+                            `${encontrou2.mochila.itens?"\nItens: \n"+encontrou2.mochila.itens.join("\n"):""}`;
+
+                await bot.sendMessage(numero, ficha, {quotedMessageId: msg.id._serialized})
+        })
+
+        lista.adicionarComandos("equipar","",async ()=>{
+            console.log("mamaefalei");
+        })
+        //lista.adicionarComandos("adicionar","",async ()=>{})
+        //lista.adicionarComandos("remover","",async ()=>{})
+        //Comando
+        var list = listar("Players")
+        var contat = (await contato(msg)).numero.replace("@c.us","")
+        var usuario = list.find(e=>e.contato==contat)
+
+        var comando = msg.body.toLowerCase().split(' ')[1]
+        var comandoSelecionado = lista.find(e=>e.nome.startsWith(comando))
+
+        if(comandoSelecionado) {
+            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
+                comandoSelecionado.func()
+            }else{
+                msg.react("💤")
+            }
+        }
+        else{
+            msg.react("⚠️")
+        }
+    })
+
     //Pegar
     lista.adicionarComandos("pegar","", async ()=>{
 
