@@ -18,9 +18,7 @@ var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165
 //Rpg "557183334339-1503676340"
 //La  "557187681493-1555160547"
 //Fof "556792117043-1588125882"
-//bot "557182060165"
-//rodrigo "557187681493"
-//ikaro "557388894174"
+//figurinha de saco "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI="
 const qrcode = require ("qrcode-terminal");
 //console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
 bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
@@ -32,11 +30,18 @@ bot.on("ready", ()=>{
 
 bot.on("message", async msg=>{
     var chat = await msg.getChat();
+    //console.log(msg.mediaKey);
+
+    if(msg.mediaKey == "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI=" || msg.mediaKey == "Jbc7FZLIRij7vXGAWijkuZik9ya6Ke2GngLtkwLUFH0="){
+        var audio = whatsapp.MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
+        bot.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
+    }
+
     if(!forchat.includes(chat.id.user)) return;if(!forchat.includes(chat.id.user)) return;
 
-    var list = listar("Players")
     var pessoa = await msg.getContact();
-    var contato = pessoa.id.user
+    var contato = pessoa.id.user;
+    var list = listar("Players")
     var usuario = list.find(e=>e.contato==contato)
     if(!usuario)fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({contato, role:""}, null, 4), "utf8")
     
