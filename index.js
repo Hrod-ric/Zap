@@ -60,11 +60,7 @@ bot.on("message", async msg=>{
 
     if(comandoSelecionado){
         try {
-            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
-                comandoSelecionado.func(msg,bot,whatsapp)
-            }else{
-                msg.react("💤")
-            }
+            comandoSelecionado(msg,bot,whatsapp)
         } catch (e) {
             msg.reply("Erro!");
             console.log(e);
