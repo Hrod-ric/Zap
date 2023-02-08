@@ -12,13 +12,35 @@ const listar = (pasta)=>{
     return Lista;
 }
 
+var a = (n1,n2)=>n1+n2;
+console.log(a(7,6));
+
+pessoas = [];
+pessoas.find(pe=>pe.nome == "luis");
+
+function mamao(lista,callback){
+    for(i=0 ; i < lista.length ; i++){
+        if(callback(lista[i])){
+            return lista[i];
+        }
+    }
+}
+mamao(pessoas, (p)=>p.nome == "heric");
+
+Array.prototype.mamao = function(callback){
+                            for(i=0 ; i < this.length ; i++){
+                                if(callback(this[i])){
+                                    return this[i];
+                                }
+                            }
+                        }                       
+pessoas.mamao((p)=>p.nome == "heric");
 
 
-var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165","557187681493","557388894174"]
-//Rpg "557183334339-1503676340"
-//La  "557187681493-1555160547"
-//Fof "556792117043-1588125882"
-//figurinha de saco "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI="
+const numeros = require("./numeros");
+var forchat = [""];//digite os numeros aqui
+forchat += numeros;
+
 const qrcode = require ("qrcode-terminal");
 //console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
 bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
@@ -43,7 +65,10 @@ bot.on("message", async msg=>{
     var contato = pessoa.id.user;
     var list = listar("Players")
     var usuario = list.find(e=>e.contato==contato)
-    if(!usuario)fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({contato, role:""}, null, 4), "utf8")
+    if(!usuario){
+        fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({contato, id:pessoa.name, role:"Visitante"}, null, 4), "utf8");
+        fs.writeFileSync("./Dados/Inventario/"+pessoa.name + ".json", JSON.stringify({contato, id:pessoa.name, "mochila":  {tipo:"Não possui", itens:null}, reserva:null}, null, 4), "utf8");
+    }
     
     var prefixo = "/"
     if(!msg.body.startsWith(prefixo)) return;
@@ -60,7 +85,11 @@ bot.on("message", async msg=>{
 
     if(comandoSelecionado){
         try {
-            comandoSelecionado(msg,bot,whatsapp)
+            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
+                comandoSelecionado.func(msg,bot,whatsapp)
+            }else{
+                msg.react("💤")
+            }
         } catch (e) {
             msg.reply("Erro!");
             console.log(e);
