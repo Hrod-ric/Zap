@@ -1,9 +1,16 @@
 const fs = require("fs")
+const Util = require("whatsapp-web.js/src/util/Util")
+Util.setFfmpegPath("ffmpeg")
+
 const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
     var Lista2 = (Lista[0].Pessoas).concat(Lista[1].Pessoas)
     console.log(Lista,Lista2);
     return Lista2;
+}
+Array.prototype.adicionarComandos = function(nome, desc, func, roles=[]){
+    this.push({nome, desc, func, roles})
+    return this
 }
 const contato = async (msg)=>{
     var chat = await msg.getChat()
