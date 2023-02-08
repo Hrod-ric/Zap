@@ -39,11 +39,39 @@ bot.on("message", async msg=>{
 
     var pessoa = await msg.getContact();
     var contato = pessoa.id.user;
-    var list = listar("Players")
-    var usuario = list.find(e=>e.contato==contato)
-    if(!usuario){
-        fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({contato, id:pessoa.name, role:"Visitante"}, null, 4), "utf8");
-        fs.writeFileSync("./Dados/Inventario/"+pessoa.name + ".json", JSON.stringify({contato, id:pessoa.name, "mochila":  {tipo:"Não possui", itens:null}, reserva:null}, null, 4), "utf8");
+    
+    var Players = listar("Players");
+    var Pl = Players.find(e=>e.contato==contato);
+    if(!Pl){
+        fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({
+            usuario: pessoa.name,
+            contato,
+            role: "Visitante",
+            alarme: false,
+            id: "",
+            nome: "",
+            titulo: "",
+            idade: "",
+            imagem: "",
+            video: "",
+            descricao: "",
+            habPassivas: null,
+            feiticosAprendidos: null
+        }, null, 4), "utf8");
+    }
+
+    var Inventarios = listar("Inventario");
+    var In = Inventarios.find(e=>e.contato==contato);
+    if(!In){
+        fs.writeFileSync("./Dados/Inventario/"+pessoa.name + ".json", JSON.stringify({
+            contato, 
+            usuario: pessoa.name,
+            mochila:  {
+                tipo:"Não possui", 
+                itens:null
+            }, 
+            reserva:null
+        }, null, 4), "utf8");
     }
     
     var prefixo = "/"
@@ -61,7 +89,7 @@ bot.on("message", async msg=>{
 
     if(comandoSelecionado){
         try {
-            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
+            if(comandoSelecionado.roles.includes(Pl.role)||!comandoSelecionado.roles.length){
                 comandoSelecionado.func(msg,bot,whatsapp)
             }else{
                 msg.react("💤")
