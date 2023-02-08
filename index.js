@@ -12,30 +12,6 @@ const listar = (pasta)=>{
     return Lista;
 }
 
-var a = (n1,n2)=>n1+n2;
-console.log(a(7,6));
-
-pessoas = [];
-pessoas.find(pe=>pe.nome == "luis");
-
-function mamao(lista,callback){
-    for(i=0 ; i < lista.length ; i++){
-        if(callback(lista[i])){
-            return lista[i];
-        }
-    }
-}
-mamao(pessoas, (p)=>p.nome == "heric");
-
-Array.prototype.mamao = function(callback){
-                            for(i=0 ; i < this.length ; i++){
-                                if(callback(this[i])){
-                                    return this[i];
-                                }
-                            }
-                        }                       
-pessoas.mamao((p)=>p.nome == "heric");
-
 
 const numeros = require("./numeros");
 var forchat = [""];//digite os numeros aqui
