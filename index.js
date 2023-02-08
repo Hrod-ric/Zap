@@ -1,63 +1,99 @@
 const whatsapp = require("whatsapp-web.js")
 const bot = new whatsapp.Client({
+    //authStrategy: new whatsapp.LocalAuth(),
     puppeteer: {
         executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     }
 })
 const fs = require ("fs")
- 
 
-var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165","557187681493"]
-//'556792117043-1588125882'
+const listar = (pasta)=>{
+    var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
+    return Lista;
+}
+
+
+
+var forchat = ["557183334339-1503676340","557187681493-1555160547","557182060165","557187681493","557388894174"]
+//Rpg "557183334339-1503676340"
+//La  "557187681493-1555160547"
+//Fof "556792117043-1588125882"
+//figurinha de saco "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI="
 const qrcode = require ("qrcode-terminal");
-
+//console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
 bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
 
 bot.on("ready", ()=>{
     console.log("pronto")
-    bot.sendMessage("557187681493@c.us", "Online metendo");
+    bot.sendMessage("557187681493@c.us", "Online");
 })
 
-var prefixo = "/"
 bot.on("message", async msg=>{
-    var chat = await msg.getChat()
+    var chat = await msg.getChat();
+    //console.log(msg.mediaKey);
 
-    if(!forchat.includes(chat.id.user)) return;
+    if(msg.mediaKey == "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI=" || msg.mediaKey == "Jbc7FZLIRij7vXGAWijkuZik9ya6Ke2GngLtkwLUFH0="){
+        var audio = whatsapp.MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
+        bot.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
+    }
+
+    if(!forchat.includes(chat.id.user)) return;if(!forchat.includes(chat.id.user)) return;
+
+    var pessoa = await msg.getContact();
+    var contato = pessoa.id.user;
+    var list = listar("Players")
+    var usuario = list.find(e=>e.contato==contato)
+    if(!usuario)fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({contato, role:""}, null, 4), "utf8")
+    
+    var prefixo = "/"
     if(!msg.body.startsWith(prefixo)) return;
 
     delete require.cache[require.resolve('./comandos')];
     var comandos = require("./comandos");
 
     var menssagem = msg.body.substring(prefixo.length);
-    var separarPrimeiraPalavra = menssagem.split(' ')[0];
-    var listaComandos = Object.keys(comandos)
-    var keySelecionada = listaComandos.find(c=>c.split(", ").includes(separarPrimeiraPalavra))
-    var comandoSelecionado = comandos[keySelecionada]
-    //var comandoSelecionado = comandos[separarPrimeiraPalavra]
+    var separarPrimeiraPalavra = menssagem.toLowerCase().split(' ')[0];
+    //var listaComandos = Object.keys(comandos)
+    //var keySelecionada = listaComandos.find(c=>c.split(", ").includes(separarPrimeiraPalavra))
+    //var comandoSelecionado = comandos[keySelecionada]
+    var comandoSelecionado= comandos.find(e=>e.nome.startsWith(separarPrimeiraPalavra))
 
     if(comandoSelecionado){
         try {
-            comandoSelecionado(msg,bot,whatsapp)
+            if(comandoSelecionado.roles.includes(usuario.role)||!comandoSelecionado.roles.length){
+                comandoSelecionado.func(msg,bot,whatsapp)
+            }else{
+                msg.react("💤")
+            }
         } catch (e) {
             msg.reply("Erro!");
+            console.log(e);
         }
     }
     else{
         msg.reply("Comando nao encontrado!")
     }
 })
-/*
-   
-    if(msg.body.startsWith(".contato")){
-        const chat = await msg.getChat();
-        await chat.sendMessage(`Hello @${contact.id.user}`, {
-            mentions: [contact]
-        });
-        //console.log(contact);
-        let menssagem = "Teste";
-        chat.sendSeen();
-        await bot.sendMessage(numero, menssagem);
-    }
-
-})*/
 bot.initialize()
+
+// PREVENT CRASH
+process.stdin.resume();//so the program will not close instantly
+
+function exitHandler(options, exitCode) {
+    if (options.cleanup) console.log('clean');
+    if (exitCode || exitCode === 0) console.log(exitCode);
+    if (options.exit) console.log('Erro de Sintaxe');
+}
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
+process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
