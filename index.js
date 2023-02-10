@@ -1,6 +1,6 @@
 const whatsapp = require("whatsapp-web.js")
 const bot = new whatsapp.Client({
-    //authStrategy: new whatsapp.LocalAuth(),
+    authStrategy: new whatsapp.LocalAuth(),
     puppeteer: {
         executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     }
@@ -39,7 +39,7 @@ bot.on("message", async msg=>{
 
     var pessoa = await msg.getContact();
     var contato = pessoa.id.user;
-    
+
     var Players = listar("Players");
     var Pl = Players.find(e=>e.contato==contato);
     if(!Pl){
@@ -67,7 +67,7 @@ bot.on("message", async msg=>{
             contato, 
             usuario: pessoa.name,
             mochila:  {
-                tipo:"Não possui", 
+                tipo:null, 
                 itens:null
             }, 
             reserva:null
