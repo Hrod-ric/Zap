@@ -1,9 +1,9 @@
 /.wwebjs_auth
 /node_modules
-/Dados/Documentos
-/Dados/Players
-/Dados/Video
-/Dados/Audios
-/Dados/Image
-/Dados/Inventario
+/Dados/Documentos/
+/Dados/Players/
+/Dados/Video/
+/Dados/Audios/
+/Dados/Image/
+/Dados/Inventario/
 /numeros.js
