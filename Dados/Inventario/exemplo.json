@@ -1,0 +1,9 @@
+{
+    "contato": "",
+    "usuario": "",
+    "mochila": {
+        "tipo": null,
+        "itens": null
+    },
+    "reserva": null
+}

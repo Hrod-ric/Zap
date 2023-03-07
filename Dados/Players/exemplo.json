@@ -1,0 +1,19 @@
+{
+    "usuario": "",
+    "contato": "",
+    "role": "",
+    "alarme": false,
+    "id": "",
+    "nome": "",
+    "titulo": "",
+    "idade": "",
+    "imagem": "",
+    "video": "",
+    "descricao": "",
+    "habPassivas": [
+        "não"
+    ],
+    "feiticosAprendidos": [
+        "não"
+    ]
+}
