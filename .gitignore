@@ -1,3 +1,8 @@
+# add .env file to .gitignore
+echo ".env" >> .gitignore
+git rm --cached .env
+git add .gitignore
+git commit -m "update ignored files"
 
 /.wwebjs_auth
 /node_modules

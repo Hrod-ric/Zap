@@ -1,6 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
-# add .env file to .gitignore
-echo ".env" >> .gitignore
-git rm --cached .env
