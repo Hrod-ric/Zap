@@ -43,13 +43,13 @@ bot.on("message", async msg=>{
     var Players = listar("Players");
     var Pl = Players.find(e=>e.contato==contato);
     if(!Pl){
-        fs.writeFileSync("./Dados/Players/"+pessoa.name + ".json", JSON.stringify({usuario: pessoa.name,contato,role: "Visitante",alarme: false,id: "",nome: "",titulo: "",idade: "",imagem: "", video: "",descricao: "",habPassivas: null,feiticosAprendidos: null}, null, 4), "utf8");
+        fs.writeFileSync("./Dados/Players/"+pessoa.name+".json", JSON.stringify({usuario: pessoa.name,contato,role: "Visitante",alarme: false,id: "",nome: "",titulo: "",idade: "",imagem: "", video: "",descricao: "",habPassivas: null,feiticosAprendidos: null}, null, 4), "utf8");
     }
 
     var Inventarios = listar("Inventario");
     var In = Inventarios.find(e=>e.contato==contato);
     if(!In){
-        fs.writeFileSync("./Dados/Inventario/"+pessoa.name + ".json", JSON.stringify({contato, usuario: pessoa.name, mochila: null, reserva:null}, null, 4), "utf8");
+        fs.writeFileSync("./Dados/Inventario/"+pessoa.name+".json", JSON.stringify({contato, usuario: pessoa.name, mochila: null, reserva:null}, null, 4), "utf8");
     }
     
     var prefixo = "/"
