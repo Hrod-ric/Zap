@@ -10,6 +10,7 @@
 *.png
 *.mp3
 !augh.mp3
+!pegar.mp3
 *.mp4
 !irmaos.mp4
 /numeros.js
