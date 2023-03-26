@@ -28,9 +28,9 @@ bot.on("ready", ()=>{
 
 bot.on("message", async msg=>{
     var chat = await msg.getChat();
-    //console.log(msg.mediaKey);
-
-    if(msg.mediaKey == "8YaU/thWJ2g2mruDgMSr9DLjCjQLRk3STacefpvwmyI=" || msg.mediaKey == "Jbc7FZLIRij7vXGAWijkuZik9ya6Ke2GngLtkwLUFH0="){
+    console.log(msg);
+    
+    if(msg.mediaKey == "17NQengODKmdEgStSXWg1WkWw0uwMCtPVcrSEKndEj4="){
         var audio = whatsapp.MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
         bot.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
     }
