@@ -28,15 +28,15 @@ bot.on("ready", ()=>{
 
 bot.on("message", async msg=>{
     var chat = await msg.getChat();
-    console.log(msg);
+    //console.log(msg);
     
     if(msg.mediaKey == "17NQengODKmdEgStSXWg1WkWw0uwMCtPVcrSEKndEj4="){
         var audio = whatsapp.MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
         bot.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
     }
-
+    
     if(!forchat.includes(chat.id.user)) return;if(!forchat.includes(chat.id.user)) return;
-
+    
     var pessoa = await msg.getContact();
     var contato = pessoa.id.user;
 
@@ -46,11 +46,11 @@ bot.on("message", async msg=>{
         fs.writeFileSync("./Dados/Players/"+pessoa.name+".json", JSON.stringify({usuario: pessoa.name,contato,role: "Visitante",alarme: false,id: "",nome: "",titulo: "",idade: "",imagem: "", video: "",descricao: "",habPassivas: null,feiticosAprendidos: null}, null, 4), "utf8");
     }
 
-    var Inventarios = listar("Inventario");
+    /*var Inventarios = listar("Inventario");
     var In = Inventarios.find(e=>e.contato==contato);
     if(!In){
-        fs.writeFileSync("./Dados/Inventario/"+pessoa.name+".json", JSON.stringify({contato, usuario: pessoa.name, mochila: null, reserva:null}, null, 4), "utf8");
-    }
+        fs.writeFileSync("./Dados/Inventario/"+pessoa.name+".json", JSON.stringify({usuario: pessoa.name, contato,  mochila: null, reserva:null}, null, 4), "utf8");
+    }*/
     
     var prefixo = "/"
     if(!msg.body.startsWith(prefixo)) return;

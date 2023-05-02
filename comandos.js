@@ -341,16 +341,17 @@ comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",as
     try{
         var numero = msg.body.split(' ')[1];
             numero = numero.startsWith('@') ? numero.replace("@","") : numero
-            numero = numero.includes('-') ? `${numero}@g.us` :
-            numero = numero.includes('@c.us') ? numero : `${numero}@c.us`;
+            numero = numero.includes('@c.us') ? '' : numero.includes('@g.us') ? numero : `${numero}@c.us`; 
+            console.log(numero);
     
         if(numero.includes("@c.us")){
             var re = /(55.{10,11})/gi
+            var texto = msg.body.split(re)[2];
         }else{
-            var re = /(55.{10,11}-.{10,11})/gi
+            //var re = /(55.{10,11}-.{10,11})/gi
+            var texto = msg.body.split(' ')[2];
         }
-        var texto = msg.body.split(re)[2];
-        
+        texto = texto.replace(" ","")
         if(texto.includes(".mp4")){
             var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+texto)
             await bot.sendMessage(numero, video, { sendVideoAsGif: true })   
@@ -360,7 +361,8 @@ comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",as
             await bot.sendMessage(numero, audio, { sendAudioAsVoice: true })
             msg.react("✅") 
         }
-    }catch{
+    }catch(e){
+        console.log(e);
         msg.react("⚠️")
     }       
 })
