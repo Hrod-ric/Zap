@@ -1,40 +1,38 @@
-const whatsapp = require("whatsapp-web.js")
-const bot = new whatsapp.Client({
-    authStrategy: new whatsapp.LocalAuth(),
+const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const client = new Client({
+    authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-    }
-})
-const fs = require ("fs")
+    executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+}});
 
+const fs = require ("fs")
 const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
     return Lista;
 }
 
-
 const numeros = require("./numeros");
 var forchat = [""];//digite os numeros aqui
 forchat += numeros;
 
-const qrcode = require ("qrcode-terminal");
-//console.log(require("./comandos").find(e=>e.nome.startsWith("comandos")).func);
-bot.on("qr",qr=>qrcode.generate(qr,{small:true}))
+const qrcode = require('qrcode-terminal');
+client.on('qr', (qr) => {
+    qrcode.generate(qr, { small: true });
+});
 
-bot.on("ready", ()=>{
+client.on('ready', () => {
     console.log("pronto")
-    bot.sendMessage("557187681493@c.us", "Online");
+    client.sendMessage("557187681493@c.us", "Online");
 })
 
-bot.on("message", async msg=>{
+client.on("message", async msg=>{
     var chat = await msg.getChat();
     //console.log(msg);
     
     if(msg.mediaKey == "17NQengODKmdEgStSXWg1WkWw0uwMCtPVcrSEKndEj4="){
-        var audio = whatsapp.MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
-        bot.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
+        var audio = MessageMedia.fromFilePath("./Dados/Audios/pegar.mp3")
+        client.sendMessage(msg.from, audio, { sendAudioAsVoice: true, quotedMessageId: msg.id._serialized})
     }
-    
     if(!forchat.includes(chat.id.user)) return;if(!forchat.includes(chat.id.user)) return;
     
     var pessoa = await msg.getContact();
@@ -68,7 +66,7 @@ bot.on("message", async msg=>{
     if(comandoSelecionado){
         try {
             if(comandoSelecionado.roles.includes(Pl.role)||!comandoSelecionado.roles.length){
-                comandoSelecionado.func(msg,bot,whatsapp)
+                comandoSelecionado.func(msg,client,MessageMedia)
             }else{
                 msg.react("💤")
             }
@@ -81,7 +79,7 @@ bot.on("message", async msg=>{
         msg.reply("Comando nao encontrado!")
     }
 })
-bot.initialize()
+client.initialize()
 
 // PREVENT CRASH
 process.stdin.resume();//so the program will not close instantly

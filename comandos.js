@@ -291,11 +291,11 @@ comandos.adicionarComandos("alterar","Altera os dados de um elemento: Nome, Idad
 },["Jogador","Admin"])
 
 //Audio
-comandos.adicionarComandos("audio","Escolha um audio para que o bot mande",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("audio","Escolha um audio para que o bot mande",async (msg, bot, MessageMedia)=>{
     var texto = msg.body.toLowerCase().split("audio")[1];
     texto = texto.charAt(0) == " "? texto.substring(1) : texto
     try{
-        var audio = await whatsapp.MessageMedia.fromFilePath("./Dados/Audios/"+texto+".mp3")
+        var audio = await MessageMedia.fromFilePath("./Dados/Audios/"+texto+".mp3")
         await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
     }catch{
         msg.react("⚠️")
@@ -310,8 +310,9 @@ comandos.adicionarComandos("comandos","Mostra todos os comandos",async (msg, bot
 })
 
 //Consultar
-comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",async (msg, bot, MessageMedia)=>{
     var Lista=listar("Players").concat(listar("Povoado"),listar("Rollenspiel"),listar("Feiticos"),listar("Extra"),listar("Extra2"));
+    console.log(Lista);
     var texto = msg.body.toLowerCase().split(' ').filter((_,i)=>i).join(" ")
     var encontrou = Lista.find(p=>p.id == texto);
 
@@ -321,12 +322,12 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
                     `${encontrou.descricao?"\n\nDescrição: "+encontrou.descricao:"\nSem descrição"}`;
 
         if(encontrou.imagem){
-            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
+            var imagem = await MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
             await bot.sendMessage(msg.from,imagem,{ caption: ficha, quotedMessageId: msg.id._serialized });
             return
         }
         if(encontrou.video){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
+            var video = await MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
             await bot.sendMessage(msg.from, video,{ sendVideoAsGif: true, caption: ficha, quotedMessageId: msg.id._serialized });
             return
         }
@@ -337,7 +338,7 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
 })
 
 //Enviar
-comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",async (msg, bot, MessageMedia)=>{
     try{
         var numero = msg.body.split(' ')[1];
             numero = numero.startsWith('@') ? numero.replace("@","") : numero
@@ -353,11 +354,11 @@ comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",as
         }
         texto = texto.replace(" ","")
         if(texto.includes(".mp4")){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+texto)
+            var video = await MessageMedia.fromFilePath("./Dados/Video/"+texto)
             await bot.sendMessage(numero, video, { sendVideoAsGif: true })   
             msg.react("✅") 
         }else if(texto.includes(".mp3")){
-            var audio = await whatsapp.MessageMedia.fromFilePath("./Dados/Audios/"+texto)
+            var audio = await MessageMedia.fromFilePath("./Dados/Audios/"+texto)
             await bot.sendMessage(numero, audio, { sendAudioAsVoice: true })
             msg.react("✅") 
         }
@@ -368,7 +369,7 @@ comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",as
 })
 
 //Ficha
-comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async (msg, bot, whatsapp)=>{ 
+comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async (msg, bot, MessageMedia)=>{ 
     var Players=listar("Players");
     var numero = (await contato(msg)).numero;
     var encontrou = Players.find(p=>p.contato == numero.replace("@c.us",""));
@@ -381,13 +382,13 @@ comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async 
                     `${encontrou.feiticosAprendidos?"\n\nFeitiços Aprendidos: "+encontrou.feiticosAprendidos.join(", "):""}`;
 
         if(encontrou.imagem){
-            var imagem = await whatsapp.MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
+            var imagem = await MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
             await bot.sendMessage(numero, imagem,{ caption: ficha, quotedMessageId: msg.id._serialized });
             msg.react("🆗")
             return
         }
         if(encontrou.video){
-            var video = await whatsapp.MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
+            var video = await MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
             await bot.sendMessage(numero, video,{ sendVideoAsGif: true, quotedMessageId: msg.id._serialized });
             await bot.sendMessage(numero, ficha)
             msg.react("🆗")
