@@ -1,6 +1,6 @@
 const fs = require("fs")
 const Util = require("whatsapp-web.js/src/util/Util")
-Util.setFfmpegPath("ffmpeg")
+Util.setFfmpegPath('C:/ffmpeg/bin/ffmpeg.exe')
 
 const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
