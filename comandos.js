@@ -1,4 +1,5 @@
-const fs = require("fs")
+const fs = require("fs");
+const { stringify } = require("querystring");
 const Util = require("whatsapp-web.js/src/util/Util")
 Util.setFfmpegPath('C:/ffmpeg/bin/ffmpeg.exe')
 
@@ -295,7 +296,7 @@ comandos.adicionarComandos("audio","Escolha um audio para que o bot mande",async
     var texto = msg.body.toLowerCase().split("audio")[1];
     texto = texto.charAt(0) == " "? texto.substring(1) : texto
     try{
-        var audio = await MessageMedia.fromFilePath("./Dados/Audios/"+texto+".mp3")
+        var audio = await MessageMedia.fromFilePath("./Dados/Audio/"+texto+".mp3")
         await bot.sendMessage(msg.from,audio,{ sendAudioAsVoice: true })
     }catch{
         msg.react("⚠️")
@@ -340,25 +341,46 @@ comandos.adicionarComandos("consultar","Mostra a descrição de um elemento",asy
 //Enviar
 comandos.adicionarComandos("enviar","Alerta a pessoa mencionada com um audio",async (msg, bot, MessageMedia)=>{
     try{
-        var numero = msg.body.split(' ')[1];
+        var numero = 0;
+        var texto = "";
+        if(msg.hasQuotedMsg){
+            var marcado = await msg.getQuotedMessage();
+            var contato = marcado.vCards[0];
+            //console.log(marcado.vCards[0]);
+
+            const reg = /(?<=\:\+)([0-9]{2})(.{1})([0-9]{2})(.{1})([0-9]{4})(\-)([0-9]{4})/gi
+            numero = contato.match(reg);
+            //console.log(numero);
+            numero = numero[0];
+            numero = numero.includes('-') ? numero.replace("-","") : numero;
+            numero = numero.replace(' ','');
+            numero = numero.replace(' ','');
+            numero = `${numero}@c.us`;
+            texto = msg.body.split(' ')[1];
+            //await bot.sendMessage(msg.from, "marcado", {quotedMessageId: texto.id._serialized});
+        }else{
+            numero = msg.body.split(' ')[1];
             numero = numero.startsWith('@') ? numero.replace("@","") : numero
             numero = numero.includes('@c.us') ? '' : numero.includes('@g.us') ? numero : `${numero}@c.us`; 
-            console.log(numero);
-    
-        if(numero.includes("@c.us")){
-            var re = /(55.{10,11})/gi
-            var texto = msg.body.split(re)[2];
-        }else{
-            //var re = /(55.{10,11}-.{10,11})/gi
-            var texto = msg.body.split(' ')[2];
+            if(numero.includes("@c.us")){
+                var re = /(55.{10,11})/gi
+                texto = msg.body.split(re)[2];
+            }else{
+                //var re = /(55.{10,11}-.{10,11})/gi
+                texto = msg.body.split(' ')[2];
+            }
         }
+
+        //console.log(numero);
+        //console.log(texto);
+
         texto = texto.replace(" ","")
         if(texto.includes(".mp4")){
             var video = await MessageMedia.fromFilePath("./Dados/Video/"+texto)
             await bot.sendMessage(numero, video, { sendVideoAsGif: true })   
             msg.react("✅") 
-        }else if(texto.includes(".mp3")){
-            var audio = await MessageMedia.fromFilePath("./Dados/Audios/"+texto)
+        }else if(texto.includes(".mp3") || texto.includes(".ogg") || texto.includes(".mpeg")){
+            var audio = await MessageMedia.fromFilePath("./Dados/Audio/"+texto)
             await bot.sendMessage(numero, audio, { sendAudioAsVoice: true })
             msg.react("✅") 
         }
@@ -384,24 +406,25 @@ comandos.adicionarComandos("ficha","Informações sobre o seu personagem",async 
         if(encontrou.imagem){
             var imagem = await MessageMedia.fromFilePath("./Dados/Image/"+encontrou.imagem)
             await bot.sendMessage(numero, imagem,{ caption: ficha, quotedMessageId: msg.id._serialized });
-            msg.react("🆗")
+            msg.react("💪")
             return
         }
         if(encontrou.video){
             var video = await MessageMedia.fromFilePath("./Dados/Video/"+encontrou.video)
             await bot.sendMessage(numero, video,{ sendVideoAsGif: true, quotedMessageId: msg.id._serialized });
             await bot.sendMessage(numero, ficha)
-            msg.react("🆗")
+            msg.react("💪")
             return
         }
 
         await bot.sendMessage(numero, ficha, {quotedMessageId: msg.id._serialized})
-        msg.react("🆗")
+        msg.react("💪")
         }
 },["Jogador","Admin"])
 
 //Listar
 comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sendo os grupos: Pessoas, Feiticos e Arquivos",async (msg, bot, whatsapp)=>{
+    console.log(msg);
     var comando = msg.body.toLowerCase().split(' ')[1]
     var numero = (await contato(msg)).numero
     texto = msg.body.toLowerCase().split(' ')[2]
@@ -449,7 +472,7 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
 
         var String =    "🔍Lista de Arquivos🔍"+
                         "\n\nImagens\n- " + fs.readdirSync("./Dados/Image").join("\n- ") +
-                        "\n\nAudios\n- " + fs.readdirSync("./Dados/Audios").join("\n- ") +
+                        "\n\nAudioS\n- " + fs.readdirSync("./Dados/Audio").join("\n- ") +
                         "\n\nVideos\n- " + fs.readdirSync("./Dados/Video").join("\n- ")
 
         await bot.sendMessage(numero, String, {quotedMessageId: msg.id._serialized})
@@ -477,21 +500,32 @@ comandos.adicionarComandos("listar","Mostra os elementos dentro de um grupo, sen
 })
 
 //Misc
-comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar", async (msg, bot, whatsapp)=>{
+comandos.adicionarComandos("misc","Figurinha, ID do grupo e Jogadores", async (msg, bot, whatsapp)=>{
 
     var lista = []
 
-    //Alarme
+    //nao lembro para que serve exec, mas tenho medo de apagar
     var exec = true;
+
+    //Alarme
     lista.adicionarComandos("alarme","Coloca um temporizador", async ()=>{
         //await bot.sendMessage(msg.from, `${tempo}`)
+
         list = listar("Players")
         var numero = (await contato(msg)).numero
-        encontrou = list.find(p=>p.contato == numero.replace("@c.us",""))
-        if(!encontrou)return console.log("saiu");;
         
         var input = msg.body.split(' ')[2]
         input = input? input : 3
+
+        if(msg.hasQuotedMsg){
+            var texto = await msg.getQuotedMessage()
+            msg = texto;
+            numero = (await contato(texto)).numero;
+        }
+        
+        encontrou = list.find(p=>p.contato == numero.replace("@c.us",""))
+        if(!encontrou)return console.log("saiu");;
+        
         
         //console.log(encontrou);
         if(encontrou?.alarme){
@@ -516,26 +550,26 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         }
     },["Admin"])
 
+
     //Baixar
     lista.adicionarComandos("baixar","baixa o video", async ()=>{
-
         var texto = msg.body.substring(13).toLowerCase()
-
+        
         if(!texto) texto = video_imagem.filename + video_imagem.filesize
-
+        
+        if(msg.hasQuotedMsg) msg = await msg.getQuotedMessage();
         var video_imagem = await msg.downloadMedia()
 
         var type = video_imagem.mimetype.split("/")
-
+        
         var list = [fs.readdirSync("./Dados/"+type[0]).map(p=>p).join(", ")]
-
-        var encontrou = list.filter(e=>e == (texto + "." + type[1]))
-
+        
+        var encontrou = list.filter(e=>e == (texto + "." + type[1].split(";")[0]))
+        
         if(encontrou == []) return msg.react("❎")
-
-        fs.writeFileSync("./Dados/" + type[0] + "/" + texto + "." + type[1] , video_imagem.data,"base64")
+        fs.writeFileSync("./Dados/" + type[0] + "/" + texto + "." + type[1].split(";")[0] , video_imagem.data,"base64")
         msg.react("✅")
-    })
+    },["Admin"])
 
     //Figurinha
     lista.adicionarComandos("figura","transforma em figurinha", async ()=>{
@@ -577,6 +611,15 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         24 até 6: madrugada*/
     },["Admin"])
 
+    //Id
+    lista.adicionarComandos("id","Diz o id", async ()=>{
+        //console.log(msg);
+        var grupoId = msg.from;
+        if(!msg.from.includes("@g.us")) return msg.react("❎");
+        await bot.sendMessage(msg.from, grupoId, {quotedMessageId: msg.id._serialized})
+        msg.react("✅")
+    })
+
     //Jogadores
     lista.adicionarComandos("jogadores","Mostra todos os membros e funções",async ()=>{
         var participantes = await msg.getChat()
@@ -598,14 +641,14 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
         await bot.sendMessage(msg.from, texto2, {quotedMessageId: msg.id._serialized})
         msg.react("✅")
 
-    },["Jogador","Admin"])
+    })
 
     //Marcar
     lista.adicionarComandos("marcar","Marca a mensagem", async ()=>{
         if(msg.hasQuotedMsg){
-            var texto = await msg.getQuotedMessage()
+            var texto = await msg.getQuotedMessage();
             //console.log(texto);
-            await bot.sendMessage(msg.from, "marcado", /*{quotedMessageId: texto.id._serialized}*/);
+            await bot.sendMessage(msg.from, "marcado", {quotedMessageId: texto.id._serialized});
         }
     },["Admin"])
 
@@ -633,7 +676,7 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
             encontrou.filter((_,i)=>i<3).forEach(e=>bot.sendMessage(msg.from, `.`, {quotedMessageId: e.id._serialized}))
             msg.react("✅")
         })
-    })
+    },["Admin"])
 
     //salvar
     lista.adicionarComandos("salvar","Salva a mensagem", async ()=>{
@@ -678,7 +721,7 @@ comandos.adicionarComandos("misc","Alarme, Horario, Jogadores, Marcar e Salvar",
 })
 
 //Mochila
-comandos.adicionarComandos("mochila","",async (msg, bot, whatsapp)=>{ 
+comandos.adicionarComandos("mochila","Mochila apenas",async (msg, bot, whatsapp)=>{ 
     var lista = [];
     var players=listar("Players")
     var numero = (await contato(msg)).numero
