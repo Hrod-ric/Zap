@@ -1,9 +1,16 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const client = new Client({
-    authStrategy: new LocalAuth(),
     puppeteer: {
-    executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-}});
+        executablePath: 'C:/Program Files/Google/Chrome/Application/Chrome',
+    } ,
+    authStrategy: new LocalAuth({
+        dataPath: "sessions",
+        })/*,
+        webVersionCache: {
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
+        }*/
+});
 
 const fs = require ("fs")
 const listar = (pasta)=>{
@@ -17,6 +24,7 @@ forchat += numeros;
 
 const qrcode = require('qrcode-terminal');
 client.on('qr', (qr) => {
+    qrcode.generate(qr, { small: true });
     qrcode.generate(qr, { small: true });
 });
 
@@ -102,3 +110,5 @@ process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
 
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+
+const express = require('express');

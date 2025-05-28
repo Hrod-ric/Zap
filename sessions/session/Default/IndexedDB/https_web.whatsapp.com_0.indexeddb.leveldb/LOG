@@ -1,0 +1,60 @@
+2025/05/27-21:02:53.102 3890 Reusing MANIFEST C:\Users\Rodrigo\Documents\Github\Zap\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/05/27-21:02:53.103 3890 Recovering log #5321
+2025/05/27-21:02:53.148 3890 Reusing old log C:\Users\Rodrigo\Documents\Github\Zap\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/005321.log 
+2025/05/27-21:02:54.602 4ddc Level-0 table #5339: started
+2025/05/27-21:02:54.689 4ddc Level-0 table #5339: 765557 bytes OK
+2025/05/27-21:02:54.691 4ddc Delete type=0 #5321
+2025/05/27-21:02:54.692 3890 Manual compaction at level-0 from '\x00*\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00+\x00\x00\x00' @ 0 : 0; will stop at '\x00+\x00\x00\x05' @ 1499753 : 1
+2025/05/27-21:02:54.692 3890 Compacting 1@0 + 3@1 files
+2025/05/27-21:02:54.777 3890 Generated table #5340@0: 14587 keys, 156568 bytes
+2025/05/27-21:02:54.864 3890 Generated table #5341@0: 45534 keys, 2268934 bytes
+2025/05/27-21:02:54.946 3890 Generated table #5342@0: 51797 keys, 2194306 bytes
+2025/05/27-21:02:55.025 3890 Generated table #5343@0: 55798 keys, 1308118 bytes
+2025/05/27-21:02:55.025 3890 Compacted 1@0 + 3@1 files => 5927926 bytes
+2025/05/27-21:02:55.029 3890 compacted to: files[ 0 4 11 0 0 0 0 ]
+2025/05/27-21:02:55.029 3890 Delete type=2 #5339
+2025/05/27-21:02:55.030 3890 Manual compaction at level-0 from '\x00+\x00\x00\x05' @ 1499753 : 1 .. '\x00+\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/05/27-21:02:55.034 3890 Level-0 table #5345: started
+2025/05/27-21:02:55.108 3890 Level-0 table #5345: 436 bytes OK
+2025/05/27-21:02:55.111 3890 Delete type=2 #5324
+2025/05/27-21:02:55.111 3890 Delete type=2 #5325
+2025/05/27-21:02:55.111 3890 Delete type=2 #5326
+2025/05/27-21:02:55.111 3890 Delete type=0 #5338
+2025/05/27-21:02:55.113 3890 Manual compaction at level-0 from '\x00+\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00,\x00\x00\x00' @ 0 : 0; will stop at '\x00+\x00\x00\x05' @ 1499786 : 0
+2025/05/27-21:02:55.113 3890 Compacting 1@0 + 4@1 files
+2025/05/27-21:02:55.182 3890 Generated table #5346@0: 14591 keys, 155908 bytes
+2025/05/27-21:02:55.258 3890 Generated table #5347@0: 45534 keys, 2268934 bytes
+2025/05/27-21:02:55.340 3890 Generated table #5348@0: 51797 keys, 2194306 bytes
+2025/05/27-21:02:55.413 3890 Generated table #5349@0: 55796 keys, 1308182 bytes
+2025/05/27-21:02:55.413 3890 Compacted 1@0 + 4@1 files => 5927330 bytes
+2025/05/27-21:02:55.416 3890 compacted to: files[ 0 4 11 0 0 0 0 ]
+2025/05/27-21:02:55.416 3890 Delete type=2 #5345
+2025/05/27-21:02:55.417 3890 Manual compaction at level-0 from '\x00+\x00\x00\x05' @ 1499786 : 0 .. '\x00,\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/05/27-21:02:55.922 4784 Compacting 1@1 + 10@2 files
+2025/05/27-21:02:56.167 4784 Generated table #5350@1: 41305 keys, 2215747 bytes
+2025/05/27-21:02:56.245 4784 Generated table #5351@1: 44318 keys, 2206122 bytes
+2025/05/27-21:02:56.321 4784 Generated table #5352@1: 2163 keys, 2156106 bytes
+2025/05/27-21:02:56.410 4784 Generated table #5353@1: 2669 keys, 2151531 bytes
+2025/05/27-21:02:56.501 4784 Generated table #5354@1: 1420 keys, 2138189 bytes
+2025/05/27-21:02:56.584 4784 Generated table #5355@1: 924 keys, 2135544 bytes
+2025/05/27-21:02:56.682 4784 Generated table #5356@1: 2250 keys, 2145856 bytes
+2025/05/27-21:02:56.775 4784 Generated table #5357@1: 3474 keys, 2155610 bytes
+2025/05/27-21:02:56.849 4784 Generated table #5358@1: 23507 keys, 2212470 bytes
+2025/05/27-21:02:56.937 4784 Generated table #5359@1: 24987 keys, 2148879 bytes
+2025/05/27-21:02:56.937 4784 Compacted 1@1 + 10@2 files => 21666054 bytes
+2025/05/27-21:02:56.940 4784 compacted to: files[ 0 3 11 0 0 0 0 ]
+2025/05/27-21:02:56.940 4784 Delete type=2 #5327
+2025/05/27-21:02:56.940 4784 Delete type=2 #5328
+2025/05/27-21:02:56.940 4784 Delete type=2 #5329
+2025/05/27-21:02:56.940 4784 Delete type=2 #5330
+2025/05/27-21:02:56.940 4784 Delete type=2 #5331
+2025/05/27-21:02:56.940 4784 Delete type=2 #5332
+2025/05/27-21:02:56.941 4784 Delete type=2 #5333
+2025/05/27-21:02:56.941 4784 Delete type=2 #5334
+2025/05/27-21:02:56.941 4784 Delete type=2 #5335
+2025/05/27-21:02:56.941 4784 Delete type=2 #5336
+2025/05/27-21:02:56.941 4784 Delete type=2 #5340
+2025/05/27-21:02:56.941 4784 Delete type=2 #5341
+2025/05/27-21:02:56.941 4784 Delete type=2 #5342
+2025/05/27-21:02:56.941 4784 Delete type=2 #5343
+2025/05/27-21:02:56.941 4784 Delete type=2 #5346

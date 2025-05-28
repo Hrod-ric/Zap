@@ -1,7 +1,8 @@
+const { log } = require("console");
 const fs = require("fs");
 const { stringify } = require("querystring");
 const Util = require("whatsapp-web.js/src/util/Util")
-Util.setFfmpegPath('C:/ffmpeg/bin/ffmpeg.exe')
+Util.setFfmpegPath('C:/src/ffmpeg/bin/ffmpeg.exe')
 
 const listar = (pasta)=>{
     var Lista = fs.readdirSync("./Dados/"+pasta).map(p=>JSON.parse(fs.readFileSync("./Dados/"+pasta+"/"+p)));
@@ -18,9 +19,8 @@ const contato = async (msg)=>{
         numero = numero.includes('@c.us') ? numero : `${numero}@c.us`;
     return {chat,numero,contato};
 }
-const getInput = (msgString, removeArgs = 0) => {
-    return msgString.split(" ").filter((_, i)=>i>removeArgs).join(" ")
-} 
+const getInput = (msgString, removeArgs = 0) => msgString.split(" ").filter((_, i)=>i>removeArgs).join(" ")
+
 const misto = async (texto)=>{
     //const regExp = /(\nome:)(.*)(\n|\.)/i
     //const re = new RegExp(`${parametro}` + `(.*)(\n|\.)`, 'i');
@@ -28,11 +28,20 @@ const misto = async (texto)=>{
     const textoSelecionado = texto.match(re)
     //console.log("\n\n");
     //console.log(re.exec(texto));
+
     if(!textoSelecionado) return;
+
     var atributos = textoSelecionado.map(p=>p.split(":")[0])
-    var valores = textoSelecionado.map(p=>p.split(":")[1].replace("$","").substring(1))
-    var input = `{ 
+    var valores = textoSelecionado.map(p=>
+        p.split(":")[1]
+        .replace("$","")
+        .substring(1))
+
+    /*var input = `{ 
         ${atributos.map((e, i)=>`"` + e.toLowerCase() + `"`+ " : " + `"`+ valores[i]+`"`).join(", ")}
+    }`*/
+    var input = `{
+        ${atributos.map((e,i)=>`"${e.toLowerCase()}":"${valores[i]}"`).join(", ")}
     }`
     var obj = JSON.parse(input)
     return obj;
@@ -559,7 +568,6 @@ comandos.adicionarComandos("misc","Figurinha, ID do grupo e Jogadores", async (m
         
         if(msg.hasQuotedMsg) msg = await msg.getQuotedMessage();
         var video_imagem = await msg.downloadMedia()
-
         var type = video_imagem.mimetype.split("/")
         
         var list = [fs.readdirSync("./Dados/"+type[0]).map(p=>p).join(", ")]
@@ -576,7 +584,15 @@ comandos.adicionarComandos("misc","Figurinha, ID do grupo e Jogadores", async (m
         if(!msg.hasMedia)return
 
         var video_imagem = await msg.downloadMedia()
-        await bot.sendMessage(msg.from, video_imagem, { sendMediaAsSticker: true })
+        console.log('logado');
+        console.log(video_imagem);
+
+        //var ra = await Util.formatVideoToWebpSticker(video_imagem);
+        //var video_sticker = await Util.formatVideoToWebpSticker(video);
+        //iconsole.log(video_sticker);
+
+        await bot.sendMessage(msg.from, video_imagem,{ sendMediaAsSticker: true });
+
         msg.react("✅")
     })
 
